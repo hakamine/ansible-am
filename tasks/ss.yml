@@ -1,0 +1,147 @@
+
+###########################################################
+#  OS repository configuration and package dependencies
+###########################################################
+
+- name: Install Storage Service packages dependencies (dnf)
+  ansible.builtin.dnf:
+    name: "{{ item.name }}"
+    enablerepo: "{{ item.enablerepo | default(omit) }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_ss_package_deps }}"
+  when: amr_install_ss_package_deps | bool
+
+
+###########################################################
+#   Clone source repo related tasks
+###########################################################
+
+- name: Add Storage Service repo dir to git safe.directory
+  ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
+  vars:
+    __repo_full_path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+
+- name: "Checkout archivematica-storage-service code"
+  git:
+    repo: "{{ amr_ss_repo }}"
+    dest: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+    version: "{{ amr_ss_version }}"
+
+- name: "Ensure the source code is readable by all"
+  file:
+    path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+    mode: "o+rX"
+    recurse: "yes"
+
+  
+###########################################################
+#   Virtualenv related tasks
+###########################################################
+
+- name: Create Storage Service virtualenv
+  ansible.builtin.import_tasks: tg-create-virtualenv.yml
+  vars:
+    __virtualenv_path: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+    __requirements_path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+
+
+###########################################################
+#   Log files related config
+###########################################################
+
+- name: "Create archivematica-storage-service log directories"
+  file:
+    dest: "{{ amr_ss_log_dir }}"
+    state: "directory"
+    owner: "archivematica"
+    group: "archivematica"
+    mode: "g+s"
+
+- name: Touch SS log files
+  ansible.builtin.file:
+    path: "{{ [amr_ss_log_dir, item] | ansible.builtin.path_join }}"
+    owner: archivematica
+    group: archivematica
+    state: touch
+    access_time: preserve
+    modification_time: preserve
+  loop:
+    - "storage_service.log"
+    - "storage_service_debug.log"
+
+- name: Create/update SS logging config file (/etc/archivematica/)
+  template:
+    src: etc/archivematica/storageService.logging.json.j2
+    dest: /etc/archivematica/storageService.logging.json
+    backup: "yes"
+    owner: root
+    group: root
+    mode: '0664'
+
+###########################################################
+# SS Django management commands related tasks
+###########################################################
+
+- name: "Run SS django collectstatic"
+  community.general.django_manage:
+    command: "collectstatic"
+    app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_ss_environment }}"
+  tags: am-debug
+
+- name: "Run SS django compilemessages"
+  community.general.django_manage:
+    command: "compilemessages"
+    app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_ss_environment }}"
+
+- name: "Run SS django database migrations"
+  django_manage:
+    command: "migrate"
+    app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_ss_environment }}"
+
+
+###########################################################
+# 
+###########################################################
+
+- name: Create/update storage service gunicorn configuration file (/etc/archivematica/)
+  ansible.builtin.template:
+    src: etc/archivematica/storage-service.gunicorn-config.py.j2
+    dest: /etc/archivematica/storage-service.gunicorn-config.py
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart Storage Service (systemd)
+
+- name: Create/update storage service gunicorn systemd service file (/etc/systemd)
+  ansible.builtin.template:
+    src: etc/systemd/system/archivematica-storage-service.service.j2
+    dest: /etc/systemd/system/archivematica-storage-service.service
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart Storage Service (systemd)
+
+- name: Add storage service gunicorn systemd env file
+  ansible.builtin.template:
+    src: etc/sysconfig/archivematica-storage-service.j2
+    dest: "{{ [amr_envvar_file_path, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart Storage Service (systemd)
+
+- name: Enable and start Storage Service (systemd)
+  ansible.builtin.systemd_service:
+    name: archivematica-storage-service
+    state: started
+    enabled: true
+    daemon_reload: true

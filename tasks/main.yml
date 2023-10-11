@@ -1,2 +1,22 @@
 ---
 # tasks file for ansible-am
+
+- name: Include common variable config tasks
+  ansible.builtin.import_tasks: common-vars.yml
+  tags:
+    - am-common
+    - am-ss
+    - am-debug
+
+- name: Include common installation tasks 
+  ansible.builtin.import_tasks: common-inst.yml
+  tags:
+    - am-common
+    - am-ss
+
+- name: Include Storage Service tasks 
+  ansible.builtin.import_tasks: ss.yml
+  when:
+    - amr_install_ss|bool
+  tags:
+    - am-ss

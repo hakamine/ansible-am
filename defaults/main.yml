@@ -1,2 +1,55 @@
----
 # defaults file for ansible-am
+# - This file contains variables that commmonly could be overriden by 
+#   host_vars or playbooks
+# - For common variables in the role that should normally be left unchanged
+#   use files in the vars/ directory instead
+
+#
+# Versions (repo branch or tag) (no default value provided, must be defined)  
+#
+# amr_ss_version: v0.21.0
+
+#
+# django secret keys (no default value provided, must be defined)
+#
+# amr_django_secret_key_ss: "<string_longer_than_50_chars>"
+
+
+#
+# Components to install
+#
+amr_install_ss: true     # install SS by default
+amr_install_am: true     # install pipeline (dashboard, MCP server/client) by default
+
+#
+# Database settings
+#
+amr_ss_db_host: "localhost"         # Storage Service database host
+amr_ss_db_port: 3306                # Storage Service database port
+amr_ss_db_name: "SS"                # Storage Service database name
+amr_ss_db_user: "ss"                # Storage Service database user
+# amr_ss_db_password: "<password>"  # Storage Service database password (no default provided)
+
+# Directory to install source code
+amr_src_path_base: "/opt/archivematica"
+
+
+# Package deps
+amr_install_ss_package_deps: true
+
+# Repositories
+amr_ss_repo: "https://github.com/artefactual/archivematica-storage-service.git"
+
+# pip and pip-tools version to be used for virtualenvs
+amr_pip_version: "21.3.1"
+amr_pip_tools_version: "6.4.0"
+
+#
+# Logging settings
+#
+amr_ss_log_dir: "/var/log/archivematica/storage-service"
+amr_ss_log_maxbytes: "104857600"          # 100 MBytes
+amr_ss_log_maxbytes_debug: "20971520"     #  20 Mbytes
+
+
+amr_ss_gunicorn_bind: "127.0.0.1:8001"

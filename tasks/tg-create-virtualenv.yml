@@ -1,0 +1,34 @@
+# Tasks group to create a virtualenv
+
+# - Tasks in this file are reused in different parts of the role
+# - When invoking assign the variables: __virtualenv_path __requirements_path 
+# - Example:  
+#     - name: Create Storage Service virtualenv
+#       ansible.builtin.import_tasks: tg-create-virtualenv.yml
+#       vars:
+#         __virtualenv_path: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+#         __requirements_path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+
+
+# TBD: add an option to recreate existing virtualenv (delete before create)
+
+- name: "Create virtualenv and install pip-tools"
+  become: true
+  become_user: "archivematica"
+  pip:
+    virtualenv: "{{ __virtualenv_path }}"
+    virtualenv_command: "{{ amr_virtualenv_executable }}"
+    name: 
+      - "pip=={{ amr_pip_version }}"
+      - "pip-tools=={{ amr_pip_tools_version }}"
+
+- name: "Synchronize virtualenv requirements with pip-sync"
+  become: true
+  become_user: "archivematica"
+  command: "{{ __virtualenv_path }}/bin/pip-sync requirements.txt"
+  args:
+    chdir: "{{ __requirements_path }}"
+  environment:
+    LC_ALL: "en_US.utf8"
+    LANG: "en_US.utf8"
+

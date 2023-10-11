@@ -1,0 +1,29 @@
+# Tasks group to add repository to git safe.directory config
+
+# Tasks in this file are reused in different parts of the role
+# - When invoking assign the __repo_full_path variable, e.g.:
+#   
+#     - name: Add Storage Service repo dir to git safe.directory
+#       ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
+#       vars:
+#         __repo_full_path: "{{ [amr_src_dir, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+
+# We can't use the community.general.git_config module to obtain 
+# currently it doesn't support multi-valued settings
+# (https://github.com/ansible-collections/community.general/issues/4731)
+
+- name: "Get git config global safe directories dir"
+  ansible.builtin.command: "git config --global --get-all safe.directory"
+  register: __git_config_global_safe_dir
+  failed_when: __git_config_global_safe_dir.rc < 0 or __git_config_global_safe_dir.rc > 1
+  changed_when: false
+
+- name: "Debug"
+  ansible.builtin.debug:
+    msg: "__git_config_global_safe_dir: {{ __git_config_global_safe_dir }}"
+
+- name: "Set AM source repo directory as git safe dir"
+  ansible.builtin.command: git config --global --add safe.directory {{ __repo_full_path }}
+  when:
+    - __repo_full_path not in __git_config_global_safe_dir.stdout_lines
+

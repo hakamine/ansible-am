@@ -1,0 +1,27 @@
+# - Files in this directory (vars/) contains common variables that should
+#   normally be left unchanged (internal use variables)
+# - For variables that normally are to be overriden by host_vars or playbooks
+#   please use defaults/main.yml instead 
+# - Variable names starting with __ are transient variables whose values are
+#   assigned to others in tasks/common-vars.yml
+#   (they shouldn't be used elsewhere)
+
+
+
+__amr_ss_package_deps:
+  - name: git                     # for ansible role (git module)
+    update_cache: true   # updating cache for the first in the list only
+  - name: python3-PyMySQL         # for ansible role (mysql_db module)
+  - name: pkgconf-pkg-config      # for mysqlclient
+  - name: python3-devel           # for mysqlclient
+  - name: mysql-devel             # for mysqlclient
+    enablerepo: devel
+  - name: gcc                     # for mysqlclient
+  - name: openldap-devel          # for python-ldap
+
+# python used to run get-pip, create virtualenvs 
+__amr_python_executable: /bin/python3.9
+
+amr_requests_ca_bundle: "/etc/pki/tls/certs/ca-bundle.crt"
+
+amr_envvar_file_path: "/etc/sysconfig"

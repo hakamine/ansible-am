@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+{% for key, value in amr_ss_environment.items() %}
+{{ key }}={{ value }}
+{% endfor %}

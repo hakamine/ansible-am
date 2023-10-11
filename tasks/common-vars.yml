@@ -1,0 +1,43 @@
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "vars/{{ ansible_distribution }}.yml"
+        - "vars/{{ ansible_os_family }}.yml"
+      skip: true
+
+- name: Check that required variables are defined
+  assert:
+    that:
+      - vars[item] is defined
+    fail_msg: "Variable {{ item }} needs to be defined"
+  become: false
+  loop:
+    - amr_ss_version
+    - amr_django_secret_key_ss
+    - amr_ss_db_password 
+
+- name: Define amr_ss_package_deps from internal vars if not explicitily defined
+  ansible.builtin.set_fact:
+    amr_ss_package_deps: "{{ __amr_ss_package_deps | list }}"
+  when: 
+    - amr_ss_packages_deps is not defined
+    - amr_install_ss_package_deps | bool
+
+# python executable used to run get-pip, create virtualenvs
+- name: Define amr_python_executable from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_python_executable: "{{ __amr_python_executable }}"
+  when: amr_python_executable is not defined
+
+# - For simplicity and make it easy to grasp how the variables are defined
+#   we are not combining environment variables (unlike the ansible-archivematica-src
+#   role)
+# - If amr_ss_environment is not defined in host_vars, we use the default value
+#   in vars/ (__amr_ss_environment)
+
+- name: Define amr_ss_environment from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_ss_environment: "{{ __amr_ss_environment }}"
+  when: amr_ss_environment is not defined
