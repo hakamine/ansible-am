@@ -4,52 +4,94 @@
 # - For common variables in the role that should normally be left unchanged
 #   use files in the vars/ directory instead
 
-#
-# Versions (repo branch or tag) (no default value provided, must be defined)  
-#
-# amr_ss_version: v0.21.0
-
-#
-# django secret keys (no default value provided, must be defined)
-#
-# amr_django_secret_key_ss: "<string_longer_than_50_chars>"
-
-
-#
+##################################################
 # Components to install
-#
-amr_install_ss: true     # install SS by default
-amr_install_am: true     # install pipeline (dashboard, MCP server/client) by default
+##################################################
+amr_install_ss: true                    # install SS
+amr_install_pipeline: true              # install pipeline (dashboard/MCP server/client)
+amr_install_ss_package_deps: true
+amr_install_pipeline_package_deps: true
 
-#
+##################################################
+# Versions (repo branch or tag)
+##################################################
+amr_ss_version: v0.21.0
+amr_pipeline_version: v1.15.0
+
+##################################################
+# django secret key (no default value provided, must be defined)
+##################################################
+# amr_django_secret_key: "<string_longer_than_50_chars>"
+
+##################################################
 # Database settings
-#
-amr_ss_db_host: "localhost"         # Storage Service database host
-amr_ss_db_port: 3306                # Storage Service database port
-amr_ss_db_name: "SS"                # Storage Service database name
-amr_ss_db_user: "ss"                # Storage Service database user
-# amr_ss_db_password: "<password>"  # Storage Service database password (no default provided)
+##################################################
+amr_ss_db_host: "localhost"
+amr_ss_db_port: 3306
+amr_ss_db_name: "SS"
+amr_ss_db_user: "ss"
+# amr_ss_db_password: "<password>"        # (no default, must be provided)
 
+amr_pipeline_db_host: "localhost"
+amr_pipeline_db_port: 3306
+amr_pipeline_db_name: "MCP"
+amr_pipeline_db_user: "archivematica"
+# amr_pipeline_db_password: "<password>"  # (no default, must be provided)
+
+##################################################
 # Directory to install source code
+##################################################
 amr_src_path_base: "/opt/archivematica"
 
-
-# Package deps
-amr_install_ss_package_deps: true
-
+##################################################
 # Repositories
+##################################################
 amr_ss_repo: "https://github.com/artefactual/archivematica-storage-service.git"
+amr_pipeline_repo: "https://github.com/artefactual/archivematica.git"
 
+##################################################
 # pip and pip-tools version to be used for virtualenvs
+##################################################
 amr_pip_version: "21.3.1"
 amr_pip_tools_version: "6.4.0"
 
-#
+##################################################
 # Logging settings
-#
+##################################################
 amr_ss_log_dir: "/var/log/archivematica/storage-service"
 amr_ss_log_maxbytes: "104857600"          # 100 MBytes
 amr_ss_log_maxbytes_debug: "20971520"     #  20 Mbytes
 
-
+##################################################
+# gunicorn 
+##################################################
 amr_ss_gunicorn_bind: "127.0.0.1:8001"
+amr_pipeline_gunicorn_bind: "127.0.0.1:8002"
+
+##################################################
+# Pipeline ES related settings
+##################################################
+amr_pipeline_search_enabled: "true"
+amr_pipeline_elasticsearch_server: "127.0.0.1:9200"
+amr_pipeline_elasticsearch_timeout: 30
+amr_pipeline_elasticsearch_max_query_size: 10000
+
+##################################################
+# Pipeline SS client related settings
+##################################################
+amr_pipeline_storage_service_client_timeout: 86400
+amr_pipeline_storage_service_client_quick_timeout: 30
+
+##################################################
+# Pipeline clamav related settings
+##################################################
+# amr_pipeline_mcpclient_clamav_server:
+#   - No default value provided (if needed it should be declared in host_vars)
+#   - If defined, the value will be assigned to the MCP client's
+#     ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLAMAV_SERVER env var, in order to reach
+#     the clamd server via UNIX socket or TCP socket
+#     (ref. https://github.com/artefactual/archivematica/blob/stable/1.15.x/src/MCPClient/install/README.md)
+#   - For RHEL based systems (assuming clamav running on same host) typically use:
+#       amr_pipeline_mcpclient_clamav_server: "localhost:3310"
+#   - For Ubuntu based systems (assuming clamav running on same host) leave undefined
+#     (will use the default value to connect to a local unix socket)

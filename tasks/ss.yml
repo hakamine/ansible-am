@@ -1,3 +1,35 @@
+###########################################################
+#  Variables 
+###########################################################
+
+- name: Check that required variables are defined (storage service)
+  assert:
+    that:
+      - vars[item] is defined
+    fail_msg: "Variable {{ item }} needs to be defined"
+  become: false
+  loop:
+    - amr_django_secret_key
+    - amr_ss_db_password 
+
+- name: Define amr_ss_package_deps from internal vars if not explicitily defined
+  ansible.builtin.set_fact:
+    amr_ss_package_deps: "{{ __amr_ss_package_deps | list }}"
+  when: 
+    - amr_ss_packages_deps is not defined
+    - amr_install_ss_package_deps | bool
+
+# - For simplicity and make it easy to grasp how the variables are defined
+#   we are not combining environment variables (unlike the ansible-archivematica-src
+#   role)
+# - For example: if amr_ss_environment is not defined in host_vars, we use the default value
+#   in vars/ (__amr_ss_environment) (i.e., one or the other, not a combination)
+
+- name: Define amr_ss_environment from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_ss_environment: "{{ __amr_ss_environment }}"
+  when: amr_ss_environment is not defined
+
 
 ###########################################################
 #  OS repository configuration and package dependencies
@@ -22,7 +54,7 @@
     __repo_full_path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
 
 - name: "Checkout archivematica-storage-service code"
-  git:
+  ansible.builtin.git:
     repo: "{{ amr_ss_repo }}"
     dest: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
     version: "{{ amr_ss_version }}"
@@ -85,28 +117,27 @@
 - name: "Run SS django collectstatic"
   community.general.django_manage:
     command: "collectstatic"
-    app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+    app_path: "{{ amr_ss_app_path }}"
     virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
   environment: "{{ amr_ss_environment }}"
-  tags: am-debug
 
 - name: "Run SS django compilemessages"
   community.general.django_manage:
     command: "compilemessages"
-    app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+    app_path: "{{ amr_ss_app_path }}"
     virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
   environment: "{{ amr_ss_environment }}"
 
 - name: "Run SS django database migrations"
   django_manage:
     command: "migrate"
-    app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+    app_path: "{{ amr_ss_app_path }}"
     virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
   environment: "{{ amr_ss_environment }}"
 
 
 ###########################################################
-# 
+# gunicorn / systemd related configuration
 ###########################################################
 
 - name: Create/update storage service gunicorn configuration file (/etc/archivematica/)

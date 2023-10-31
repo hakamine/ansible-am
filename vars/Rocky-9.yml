@@ -6,8 +6,9 @@
 #   assigned to others in tasks/common-vars.yml
 #   (they shouldn't be used elsewhere)
 
-
-
+#
+# Package dependencies (in case not explicitly defined)
+#
 __amr_ss_package_deps:
   - name: git                     # for ansible role (git module)
     update_cache: true   # updating cache for the first in the list only
@@ -19,8 +20,17 @@ __amr_ss_package_deps:
   - name: gcc                     # for mysqlclient
   - name: openldap-devel          # for python-ldap
 
-# python used to run get-pip, create virtualenvs 
+__amr_pipeline_package_deps:
+  - name: git               # for ansible role (git module)
+    update_cache: true      # updating cache for the first in the list only
+
+
+#
+# python binary used to run get-pip, create virtualenvs 
+#
 __amr_python_executable: /bin/python3.9
+
+
 
 amr_requests_ca_bundle: "/etc/pki/tls/certs/ca-bundle.crt"
 

@@ -10,7 +10,7 @@ User=archivematica
 Group=archivematica
 EnvironmentFile={{ [amr_envvar_file_path, 'archivematica-storage-service'] | ansible.builtin.path_join }}
 
-WorkingDirectory={{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}
+WorkingDirectory={{ amr_ss_app_path }}
 ExecStart={{ [amr_virtualenv_path_base, 'archivematica-storage-service', 'bin/gunicorn'] | ansible.builtin.path_join }} --config /etc/archivematica/storage-service.gunicorn-config.py storage_service.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

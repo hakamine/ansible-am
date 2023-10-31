@@ -1,0 +1,100 @@
+###########################################################
+#  Variables 
+###########################################################
+
+- name: Check that required variables are defined (pipeline)
+  assert:
+    that:
+      - vars[item] is defined
+    fail_msg: "Variable {{ item }} needs to be defined"
+  become: false
+  loop:
+    - amr_django_secret_key
+    - amr_pipeline_db_password 
+
+- name: Define amr_pipeline_package_deps from internal vars if not explicitily defined
+  ansible.builtin.set_fact:
+    amr_pipeline_package_deps: "{{ __amr_pipeline_package_deps | list }}"
+  when: 
+    - amr_pipeline_packages_deps is not defined
+    - amr_install_pipeline_package_deps | bool
+
+# - For simplicity and make it easy to grasp how the variables are defined
+#   we are not combining environment variables (unlike the ansible-archivematica-src
+#   role)
+# - For example: if amr_dashboard_environment is not defined in host_vars, we use the default value
+#   in vars/ (__amr_dashboard_environment) (i.e., one or the other, not a combination)
+
+- name: Define amr_dashboard_environment from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_dashboard_environment: "{{ __amr_dashboard_environment }}"
+  when: amr_dashboard_environment is not defined
+
+- name: Define amr_mcpserver_environment from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_mcpserver_environment: "{{ __amr_mcpserver_environment }}"
+  when: amr_mcpserver_environment is not defined
+
+- name: Define amr_mcpclient_environment from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_mcpclient_environment: "{{ __amr_mcpclient_environment }}"
+  when: amr_mcpclient_environment is not defined
+
+
+###########################################################
+#  OS repository configuration and package dependencies
+###########################################################
+
+- name: Install pipeline packages dependencies (dnf)
+  ansible.builtin.dnf:
+    name: "{{ item.name }}"
+    enablerepo: "{{ item.enablerepo | default(omit) }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_pipeline_package_deps }}"
+  when: amr_install_pipeline_package_deps | bool
+
+
+###########################################################
+#   Clone source repo related tasks
+###########################################################
+
+- name: Add pipeline repo dir to git safe.directory
+  ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
+  vars:
+    __repo_full_path: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+
+- name: Checkout pipeline code
+  ansible.builtin.git:
+    repo: "{{ amr_pipeline_repo }}"
+    dest: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+    version: "{{ amr_pipeline_version }}"
+
+- name: "Ensure the source code is readable by all"
+  file:
+    path: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+    mode: "o+rX"
+    recurse: "yes"
+
+  
+###########################################################
+#   Virtualenv related tasks
+###########################################################
+
+- name: Create pipeline virtualenv
+  ansible.builtin.import_tasks: tg-create-virtualenv.yml
+  vars:
+    __virtualenv_path: "{{ [amr_virtualenv_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+    __requirements_path: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+
+###########################################################
+#   Log files related config
+###########################################################
+
+
+
+###########################################################
+#   Shared directory related config
+###########################################################
+
+
+

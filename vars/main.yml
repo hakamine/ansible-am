@@ -2,9 +2,6 @@
 #   normally be left unchanged (internal use variables)
 # - For variables that normally are to be overriden by host_vars or playbooks
 #   please use defaults/main.yml instead 
-# - Variable names starting with __ are transient variables whose values are
-#   assigned to others in tasks/common-vars.yml
-#   (they shouldn't be used elsewhere)
 
 # pip executable (used in ansible pip module)
 amr_pip_executable: "/var/lib/archivematica/.local/bin/pip"
@@ -14,13 +11,19 @@ amr_virtualenv_executable: "/var/lib/archivematica/.local/bin/virtualenv"
 # virtualenv paths
 amr_virtualenv_path_base: "/usr/share/archivematica/virtualenvs"
 
+# app paths
+amr_ss_app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+amr_dashboard_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/dashboard/src' | ansible.builtin.path_join }}"
+amr_mcpserver_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPServer/lib' | ansible.builtin.path_join }}"
+amr_mcpclient_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPClient/lib' | ansible.builtin.path_join }}"
+amr_amcommon_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/archivematicaCommon/lib' | ansible.builtin.path_join }}"
 
-# environment vars for django
+# environment vars for services
 
 __amr_ss_environment:
   DJANGO_SETTINGS_MODULE: "storage_service.settings.production"
   DJANGO_ALLOWED_HOSTS: "*"
-  DJANGO_SECRET_KEY: '{{ amr_django_secret_key_ss }}'
+  DJANGO_SECRET_KEY: '{{ amr_django_secret_key }}'
   EMAIL_HOST: "localhost"
   EMAIL_HOST_PASSWORD: ""
   EMAIL_HOST_USER: ""
@@ -31,5 +34,74 @@ __amr_ss_environment:
   REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
   SS_DB_URL: 'mysql://{{ amr_ss_db_user }}:{{ amr_ss_db_password }}@{{ amr_ss_db_host }}:{{ amr_ss_db_port }}/{{ amr_ss_db_name }}'
   SS_GUNICORN_BIND: "{{ amr_ss_gunicorn_bind }}"
-  SS_GUNICORN_CHDIR: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
+  SS_GUNICORN_CHDIR: "{{ amr_ss_app_path }}"
   SS_GUNICORN_WORKERS: "3"
+  SS_PROMETHEUS_ENABLED: "true"
+
+__amr_dashboard_environment:
+  AM_GUNICORN_BIND: "{{ amr_pipeline_gunicorn_bind }}"
+  ARCHIVEMATICA_DASHBOARD_CLIENT_HOST: "{{ amr_pipeline_db_host }}"
+  ARCHIVEMATICA_DASHBOARD_CLIENT_PORT: "{{ amr_pipeline_db_port }}"
+  ARCHIVEMATICA_DASHBOARD_CLIENT_DATABASE: "{{ amr_pipeline_db_name }}"
+  ARCHIVEMATICA_DASHBOARD_CLIENT_USER: "{{ amr_pipeline_db_user }}"
+  ARCHIVEMATICA_DASHBOARD_CLIENT_PASSWORD: "{{ amr_pipeline_db_password }}"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_DJANGO_ALLOWED_HOSTS: "*"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_DJANGO_SECRET_KEY: '{{ amr_django_secret_key }}'
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_SEARCH_ENABLED: "{{ amr_pipeline_search_enabled }}"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_ELASTICSEARCH_SERVER: "{{ amr_pipeline_elasticsearch_server }}"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_ELASTICSEARCH_TIMEOUT: "{{ amr_pipeline_elasticsearch_timeout }}"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_ELASTICSEARCH_MAX_QUERY_SIZE: "{{ amr_pipeline_elasticsearch_max_query_size }}"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_PROMETHEUS_ENABLED: "true"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_STORAGE_SERVICE_CLIENT_TIMEOUT: "{{ amr_pipeline_storage_service_client_timeout }}"
+  ARCHIVEMATICA_DASHBOARD_DASHBOARD_STORAGE_SERVICE_CLIENT_QUICK_TIMEOUT: "{{ amr_pipeline_storage_service_client_quick_timeout }}"
+  DJANGO_SETTINGS_MODULE: "settings.production"
+  LANG: "en_US.UTF-8"
+  LC_ALL: "en_US.UTF-8"
+  LC_LANG: "en_US.UTF-8"
+  PYTHONPATH: "{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
+  REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
+
+__amr_mcpserver_environment:
+  ARCHIVEMATICA_MCPSERVER_CLIENT_HOST: "{{ amr_pipeline_db_host }}"
+  ARCHIVEMATICA_MCPSERVER_CLIENT_PORT: "{{ amr_pipeline_db_port }}"
+  ARCHIVEMATICA_MCPSERVER_CLIENT_DATABASE: "{{ amr_pipeline_db_name }}"
+  ARCHIVEMATICA_MCPSERVER_CLIENT_USER: "{{ amr_pipeline_db_user }}"
+  ARCHIVEMATICA_MCPSERVER_CLIENT_PASSWORD: "{{ amr_pipeline_db_password }}"
+  ARCHIVEMATICA_MCPSERVER_MCPSERVER_PROMETHEUS_BIND_PORT: "7998"
+  ARCHIVEMATICA_MCPSERVER_MCPSERVER_PROMETHEUS_BIND_ADDRESS: "127.0.0.1"
+  ARCHIVEMATICA_MCPSERVER_MCPSERVER_SEARCH_ENABLED: "{{ amr_pipeline_search_enabled }}"
+  ARCHIVEMATICA_MCPSERVER_MCPSERVER_STORAGE_SERVICE_CLIENT_TIMEOUT: "{{ amr_pipeline_storage_service_client_timeout }}"
+  ARCHIVEMATICA_MCPSERVER_MCPSERVER_STORAGE_SERVICE_CLIENT_QUICK_TIMEOUT: "{{ amr_pipeline_storage_service_client_quick_timeout }}"
+  DJANGO_SETTINGS_MODULE: "settings.common"
+  LANG: "en_US.UTF-8"
+  LC_ALL: "en_US.UTF-8"
+  LC_LANG: "en_US.UTF-8"
+  PYTHONPATH: "{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
+  REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
+
+
+__amr_mcpclient_environment:
+  ARCHIVEMATICA_MCPCLIENT_CLIENT_HOST: "{{ amr_pipeline_db_host }}"
+  ARCHIVEMATICA_MCPCLIENT_CLIENT_PORT: "{{ amr_pipeline_db_port }}"
+  ARCHIVEMATICA_MCPCLIENT_CLIENT_DATABASE: "{{ amr_pipeline_db_name }}"
+  ARCHIVEMATICA_MCPCLIENT_CLIENT_USER: "{{ amr_pipeline_db_user }}"
+  ARCHIVEMATICA_MCPCLIENT_CLIENT_PASSWORD: "{{ amr_pipeline_db_password }}"
+  ARCHIVEMATICA_MCPCLIENT_EMAIL_BACKEND: "django.core.mail.backends.smtp.EmailBackend"
+  ARCHIVEMATICA_MCPCLIENT_EMAIL_HOST: "127.0.0.1"
+  ARCHIVEMATICA_MCPCLIENT_EMAIL_PORT: "25"
+  ARCHIVEMATICA_MCPCLIENT_EMAIL_USE_TLS: "False"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLAMAV_SERVER: "{{ amr_pipeline_mcpclient_clamav_server | default(omit) }}"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_PROMETHEUS_BIND_PORT: "7999"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_PROMETHEUS_BIND_ADDRESS: "127.0.0.1"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_SEARCH_ENABLED: "{{ amr_pipeline_search_enabled }}"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_ELASTICSEARCHSERVER: "{{ amr_pipeline_elasticsearch_server }}"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_ELASTICSEARCHTIMEOUT: "{{ amr_pipeline_elasticsearch_timeout }}"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_STORAGE_SERVICE_CLIENT_TIMEOUT: "{{ amr_pipeline_storage_service_client_timeout }}"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_STORAGE_SERVICE_CLIENT_QUICK_TIMEOUT: "{{ amr_pipeline_storage_service_client_quick_timeout }}"
+  DJANGO_SETTINGS_MODULE: "settings.common"
+  LANG: "en_US.UTF-8"
+  LC_ALL: "en_US.UTF-8"
+  LC_LANG: "en_US.UTF-8"
+  PATH: "{{ [amr_virtualenv_path_base, 'archivematica/bin'] | ansible.builtin.path_join }}:/usr/local/sbin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin"
+  PYTHONPATH: "{{ amr_mcpclient_app_path }}:{{ [amr_mcpclient_app_path, 'clientScripts'] | ansible.builtin.path_join }}:{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
+  REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
