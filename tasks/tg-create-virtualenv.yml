@@ -14,7 +14,7 @@
 
 - name: "Create virtualenv and install pip-tools"
   become: true
-  become_user: "archivematica"
+  become_user: "{{ amr_os_user_name }}"
   pip:
     virtualenv: "{{ __virtualenv_path }}"
     virtualenv_command: "{{ amr_virtualenv_executable }}"
@@ -24,7 +24,7 @@
 
 - name: "Synchronize virtualenv requirements with pip-sync"
   become: true
-  become_user: "archivematica"
+  become_user: "{{ amr_os_user_name }}"
   command: "{{ __virtualenv_path }}/bin/pip-sync requirements.txt"
   args:
     chdir: "{{ __requirements_path }}"

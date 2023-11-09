@@ -1,15 +1,25 @@
 # - Files in this directory (vars/) contains common variables that should
-#   normally be left unchanged (internal use variables)
+#   normally be left unchanged
 # - For variables that normally are to be overriden by host_vars or playbooks
 #   please use defaults/main.yml instead 
+#   (ref. https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#understanding-variable-precedence)
+
+###########################################################
+#   Pip / Virtualenv related 
+###########################################################
 
 # pip executable (used in ansible pip module)
-amr_pip_executable: "/var/lib/archivematica/.local/bin/pip"
+amr_pip_executable: "{{ [amr_os_user_home, '.local/bin/pip' ] | ansible.builtin.path_join }}"
+
 # virtualenv executable (for virtualenv_command used in ansible pip module)
-amr_virtualenv_executable: "/var/lib/archivematica/.local/bin/virtualenv"
+amr_virtualenv_executable: "{{ [amr_os_user_home, '.local/bin/virtualenv' ] | ansible.builtin.path_join }}"
 
 # virtualenv paths
 amr_virtualenv_path_base: "/usr/share/archivematica/virtualenvs"
+
+###########################################################
+#   Code / app paths 
+###########################################################
 
 # app paths
 amr_ss_app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
@@ -18,7 +28,9 @@ amr_mcpserver_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPServer/
 amr_mcpclient_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPClient/lib' | ansible.builtin.path_join }}"
 amr_amcommon_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/archivematicaCommon/lib' | ansible.builtin.path_join }}"
 
-# environment vars for services
+###########################################################
+#   Environment variables 
+###########################################################
 
 __amr_ss_environment:
   DJANGO_SETTINGS_MODULE: "storage_service.settings.production"

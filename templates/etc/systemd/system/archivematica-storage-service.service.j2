@@ -6,8 +6,8 @@ After=network.target
 
 [Service]
 PIDFile=/run/archivematica-storage-service_gunicorn.pid
-User=archivematica
-Group=archivematica
+User={{ amr_os_user_name }}
+Group={{ amr_os_group_name }}
 EnvironmentFile={{ [amr_envvar_file_path, 'archivematica-storage-service'] | ansible.builtin.path_join }}
 
 WorkingDirectory={{ amr_ss_app_path }}

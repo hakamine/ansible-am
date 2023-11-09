@@ -85,15 +85,15 @@
   file:
     dest: "{{ amr_ss_log_dir }}"
     state: "directory"
-    owner: "archivematica"
-    group: "archivematica"
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
     mode: "g+s"
 
 - name: Touch SS log files
   ansible.builtin.file:
     path: "{{ [amr_ss_log_dir, item] | ansible.builtin.path_join }}"
-    owner: archivematica
-    group: archivematica
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
     state: touch
     access_time: preserve
     modification_time: preserve

@@ -1,19 +1,32 @@
+###########################################################
+#   User/Group archivematica creation
+###########################################################
 
-
+# This role creates a group and user "archivematica" by default,
+# but in some special cases, this may not be needed / produce an error
+#  (e.g., some environments use network services like sssd to provide
+# the archivematica user and group )
 
 - name: Create group archivematica
   ansible.builtin.group:
-    name: archivematica
-    gid: 333
+    name: "{{ amr_os_group_name }}"
+    gid: "{{ amr_os_group_gid }}"
     system: true
+  when: amr_create_os_user_group|bool
 
 - name: Create user archivematica
   ansible.builtin.user:
-    name: archivematica
-    uid: 333
+    name: "{{ amr_os_user_name }}"
+    uid: "{{ amr_os_user_uid }}"
     system: true
-    group: archivematica
-    home: /var/lib/archivematica
+    group: "{{ amr_os_group_name }}"
+    home: "{{ amr_os_user_home }}"
+  when: amr_create_os_user_group|bool
+
+
+###########################################################
+#   Common directories, pip, virtualenv 
+###########################################################
 
 - name: Create directory to hold archivematica source code repositories
   ansible.builtin.file:
@@ -22,7 +35,7 @@
     mode: '0755'
 
 # - Use get-pip.py with --user option to install pip to the 
-#   user archivematica install directory ( var/lib/archivematica/.local/ )
+#   user archivematica install directory ( ${HOME}/.local/ )
 # - Do not install globally to avoid conflicts with OS package installs 
 #   of pip 
 # Ref.
@@ -30,25 +43,24 @@
 # - https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-user
 # - https://stackoverflow.com/questions/40852267/installing-pip-locally-without-root-privileges
 
-
 - name: "Download get-pip.py in archivematica userdir"
   become: true
-  become_user: archivematica
+  become_user: "{{ amr_os_user_name }}"
   ansible.builtin.get_url:
     url: "https://bootstrap.pypa.io/get-pip.py"
-    dest: "/var/lib/archivematica/"
+    dest: "{{ [amr_os_user_home, 'get-pip.py'] | ansible.builtin.path_join }}"
 
 - name: "Install pip with get-pip.py for user archivematica"
   become: true
-  become_user: archivematica
+  become_user: "{{ amr_os_user_name }}"
   ansible.builtin.command: "{{ amr_python_executable }} get-pip.py --user pip=={{ amr_pip_version }}"
   args:
-    chdir: "/var/lib/archivematica"
-    creates: /var/lib/archivematica/.local/bin/pip
+    chdir: "{{ amr_os_user_home }}"
+    creates: "{{ [amr_os_user_home, '.local/bin/pip'] }}"
 
 - name: "Install virtualenv with pip for user archivematica"
   become: true
-  become_user: archivematica
+  become_user: "{{ amr_os_user_name }}"
   pip:
     name: "virtualenv"
     executable: "{{ amr_pip_executable }}"
@@ -57,13 +69,13 @@
 - name: "Create base directory for virtualenvs will be created"
   file:
     path: "{{ amr_virtualenv_path_base }}"
-    owner: "archivematica"
-    group: "archivematica"
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
     state: "directory"
 
 - name: "Create directory in /etc/ for archivematica misc config files"
   file:
     path: "/etc/archivematica"
-    owner: "archivematica"
-    group: "archivematica"
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
     state: "directory"

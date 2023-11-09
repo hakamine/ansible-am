@@ -95,3 +95,20 @@ amr_pipeline_storage_service_client_quick_timeout: 30
 #       amr_pipeline_mcpclient_clamav_server: "localhost:3310"
 #   - For Ubuntu based systems (assuming clamav running on same host) leave undefined
 #     (will use the default value to connect to a local unix socket)
+
+###########################################################
+#   User/Group archivematica related variables
+###########################################################
+
+# This role creates a group and user "archivematica" by default,
+# but in some special cases, this may not be desired
+#  (e.g., some environments use network services like sssd to provide
+# the archivematica user and group )
+
+amr_create_os_user_group: true
+
+amr_os_group_name: archivematica
+amr_os_group_gid: "333"
+amr_os_user_name: archivematica
+amr_os_user_uid: "333"
+amr_os_user_home: "/var/lib/archivematica"
