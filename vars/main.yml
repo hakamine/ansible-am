@@ -23,10 +23,10 @@ amr_virtualenv_path_base: "/usr/share/archivematica/virtualenvs"
 
 # app paths
 amr_ss_app_path: "{{ [amr_src_path_base, 'archivematica-storage-service', 'storage_service'] | ansible.builtin.path_join }}"
-amr_dashboard_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/dashboard/src' | ansible.builtin.path_join }}"
-amr_mcpserver_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPServer/lib' | ansible.builtin.path_join }}"
-amr_mcpclient_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPClient/lib' | ansible.builtin.path_join }}"
-amr_amcommon_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/archivematicaCommon/lib' | ansible.builtin.path_join }}"
+amr_dashboard_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/dashboard/src'] | ansible.builtin.path_join }}"
+amr_mcpserver_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPServer/lib'] | ansible.builtin.path_join }}"
+amr_mcpclient_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/MCPClient/lib'] | ansible.builtin.path_join }}"
+amr_amcommon_app_path: "{{ [amr_src_path_base, 'archivematica', 'src/archivematicaCommon/lib'] | ansible.builtin.path_join }}"
 
 ###########################################################
 #   Environment variables 
