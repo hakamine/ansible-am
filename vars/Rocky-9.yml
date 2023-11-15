@@ -16,7 +16,13 @@ __amr_ss_package_deps:
 __amr_pipeline_package_deps:
   - name: git               # for ansible role (git module)
     update_cache: true      # updating cache for the first in the list only
-
+  - name: python3-PyMySQL         # for ansible role (mysql_db module)
+  - name: pkgconf-pkg-config      # for mysqlclient
+  - name: python3-devel           # for mysqlclient
+  - name: mysql-devel             # for mysqlclient
+    enablerepo: devel
+  - name: gcc                     # for mysqlclient
+  - name: openldap-devel          # for python-ldap
 
 ###########################################################
 # Other OS dependent parameters
