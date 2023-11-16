@@ -59,8 +59,20 @@ amr_pip_tools_version: "6.4.0"
 # Logging settings
 ##################################################
 amr_ss_log_dir: "/var/log/archivematica/storage-service"
-amr_ss_log_maxbytes: "104857600"          # 100 MBytes
-amr_ss_log_maxbytes_debug: "20971520"     #  20 Mbytes
+amr_ss_log_maxbytes: "20971520"     #  20 Mbytes
+amr_ss_log_maxbytes_debug: "104857600"          # 100 MBytes
+
+amr_dashboard_log_dir: "/var/log/archivematica/dashboard"
+amr_dashboard_log_maxbytes: "20971520"     #  20 Mbytes
+amr_dashboard_log_maxbytes_debug: "104857600"          # 100 MBytes
+
+amr_mcpserver_log_dir: "/var/log/archivematica/MCPServer"
+amr_mcpserver_log_maxbytes: "4194304"     #   4 Mbytes
+amr_mcpserver_log_maxbytes_debug: "4194304"     #   4 Mbytes
+
+amr_mcpclient_log_dir: "/var/log/archivematica/MCPClient"
+amr_mcpclient_log_maxbytes: "4194304"     #   4 Mbytes
+amr_mcpclient_log_maxbytes_debug: "4194304"     #   4 Mbytes
 
 ##################################################
 # gunicorn 
