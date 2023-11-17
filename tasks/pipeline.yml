@@ -183,11 +183,35 @@
 # Dashboard Django management commands related tasks
 ###########################################################
 
+- name: "Run Dashboard django collectstatic"
+  community.general.django_manage:
+    command: "collectstatic"
+    app_path: "{{ amr_dashboard_app_path }}"
+    pythonpath: "{{ amr_amcommon_app_path }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_dashboard_environment }}"
+
+- name: "Run Dashboard django collectstatic"
+  community.general.django_manage:
+    command: "compilemessages"
+    app_path: "{{ amr_dashboard_app_path }}"
+    pythonpath: "{{ amr_amcommon_app_path }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_dashboard_environment }}"
+
+- name: "Run Dashboard django migrate"
+  community.general.django_manage:
+    command: "migrate"
+    app_path: "{{ amr_dashboard_app_path }}"
+    pythonpath: "{{ amr_amcommon_app_path }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_dashboard_environment }}"
+
 ###########################################################
 # gunicorn / systemd related configuration
 ###########################################################
 
-- name: Create/update dashboard gunicorn configuration file (/etc/archivematica/)
+- name: Create/update Dashboard gunicorn configuration file (/etc/archivematica/)
   ansible.builtin.template:
     src: etc/archivematica/dashboard.gunicorn-config.py.j2
     dest: /etc/archivematica/dashboard.gunicorn-config.py
@@ -196,3 +220,42 @@
     group: root
     mode: 0644
   notify: Restart Dashboard (systemd)
+
+- name: Create/update pipeline systemd service files (/etc/systemd)
+  ansible.builtin.template:
+    src: "etc/systemd/system/{{ item }}.service.j2"
+    dest: /etc/systemd/system/{{ item }}.service
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  loop:
+    - archivematica-dashboard
+    - archivematica-mcp-client
+    - archivematica-mcp-server
+  notify: Restart Archivematica pipeline (systemd)
+
+- name: Create/update pipeline service env files
+  ansible.builtin.template:
+    src: "etc/sysconfig/{{ item }}.j2"
+    dest: "{{ [amr_envvar_file_path, item] | ansible.builtin.path_join }}"
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  loop:
+    - archivematica-dashboard
+    - archivematica-mcp-client
+    - archivematica-mcp-server
+  notify: Restart Archivematica pipeline (systemd)
+
+- name: Enable and start pipeline services (systemd)
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - archivematica-mcp-server
+    - archivematica-mcp-client
+    - archivematica-dashboard

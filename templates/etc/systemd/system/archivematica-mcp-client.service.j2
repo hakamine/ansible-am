@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Archivematica MCP Client Service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User={{ amr_os_user_name }}
+Group={{ amr_os_group_name }}
+EnvironmentFile={{ [amr_envvar_file_path, 'archivematica-mcp-client'] | ansible.builtin.path_join }}
+ExecStart={{ [amr_virtualenv_path_base, 'archivematica-storage-service', 'bin/python'] | ansible.builtin.path_join }} {{ [amr_mcpclient_app_path , 'archivematicaClient.py'] | ansible.builtin.path_join }}
+
+[Install]
+WantedBy=multi-user.target

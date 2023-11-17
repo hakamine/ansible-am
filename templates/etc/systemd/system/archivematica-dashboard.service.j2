@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Archivematica Dashboard
+After=syslog.target network.target
+StartLimitInterval=200
+StartLimitBurst=5
+
+[Service]
+PIDFile=/run/archivematica-dashboard_gunicorn.pid
+User={{ amr_os_user_name }}
+Group={{ amr_os_group_name }}
+EnvironmentFile={{ [amr_envvar_file_path, 'archivematica-dashboard'] | ansible.builtin.path_join }}
+WorkingDirectory={{ amr_dashboard_app_path }}
+ExecStart={{ [amr_virtualenv_path_base, 'archivematica', 'bin/gunicorn'] | ansible.builtin.path_join }} --config /etc/archivematica/dashboard.gunicorn-config.py wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
