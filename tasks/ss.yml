@@ -58,6 +58,8 @@
     repo: "{{ amr_ss_repo }}"
     dest: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
     version: "{{ amr_ss_version }}"
+    force: true
+    accept_hostkey: true
 
 - name: "Ensure the source code is readable by all"
   file:
