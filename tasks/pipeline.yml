@@ -173,8 +173,6 @@
 ###########################################################
 
 - name: Install front-end dependencies
-  become: true
-  become_user: archivematica
   command: npm install
   args:
     chdir: "{{ [amr_src_path_base, 'archivematica/src/dashboard/frontend' ] | ansible.builtin.path_join }}"
