@@ -3,26 +3,28 @@
 ###########################################################
 
 __amr_ss_package_deps:
-  - name: git                     # for ansible role (git module)
-    update_cache: true   # updating cache for the first in the list only
-  - name: python3-PyMySQL         # for ansible role (mysql_db module)
-  - name: pkgconf-pkg-config      # for mysqlclient
-  - name: python3-devel           # for mysqlclient
-  - name: mysql-devel             # for mysqlclient
-    enablerepo: devel
-  - name: gcc                     # for mysqlclient
-  - name: openldap-devel          # for python-ldap
+  - name: 
+      - git                       # for ansible role (git module)
+      - python3-PyMySQL           # for ansible role (mysql_db module)
+      - pkgconf-pkg-config        # for mysqlclient
+      - python3-devel             # for mysqlclient
+      - mysql-devel               # for mysqlclient
+      - gcc                       # for mysqlclient
+      - openldap-devel            # for python-ldap
+    update_cache: true
+    enablerepo: devel             # required for mysql-devel
 
 __amr_pipeline_package_deps:
-  - name: git               # for ansible role (git module)
-    update_cache: true      # updating cache for the first in the list only
-  - name: python3-PyMySQL         # for ansible role (mysql_db module)
-  - name: pkgconf-pkg-config      # for mysqlclient
-  - name: python3-devel           # for mysqlclient
-  - name: mysql-devel             # for mysqlclient
-    enablerepo: devel
-  - name: gcc                     # for mysqlclient
-  - name: openldap-devel          # for python-ldap
+  - name: 
+      - git                       # for ansible role (git module)
+      - python3-PyMySQL           # for ansible role (mysql_db module)
+      - pkgconf-pkg-config        # for mysqlclient
+      - python3-devel             # for mysqlclient
+      - mysql-devel               # for mysqlclient
+      - gcc                       # for mysqlclient
+      - openldap-devel            # for python-ldap
+    update_cache: true
+    enablerepo: devel            # required for mysql-devel
 
 ###########################################################
 # Other OS dependent parameters
