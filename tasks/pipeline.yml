@@ -132,8 +132,24 @@
 # Dashboard frontend (npm) related tasks
 ###########################################################
 
+# Note: npm needs to be run as non-root in order to build properly
+# (https://stackoverflow.com/questions/18136746/npm-install-failed-with-cannot-run-in-wd)
+
+- name: "Change ownership of build directories to archivematica"
+  file:
+    dest: "{{ item }}"
+    state: "directory"
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
+    recurse: "yes"
+  loop:
+    - "{{ [amr_src_path_base, 'archivematica/src/dashboard/src/media' ] | ansible.builtin.path_join }}"
+    - "{{ [amr_src_path_base, 'archivematica/src/dashboard/frontend' ] | ansible.builtin.path_join }}"
+
 - name: Install front-end dependencies
-  command: npm install
+  become: true
+  become_user: "{{ amr_os_user_name }}"
+  ansible.builtin.command: npm install
   args:
     chdir: "{{ [amr_src_path_base, 'archivematica/src/dashboard/frontend' ] | ansible.builtin.path_join }}"
 
