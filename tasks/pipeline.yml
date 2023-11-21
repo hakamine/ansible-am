@@ -192,7 +192,7 @@
     virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica'] | ansible.builtin.path_join }}"
   environment: "{{ amr_dashboard_environment }}"
 
-- name: "Run Dashboard django collectstatic"
+- name: "Run Dashboard django compilemessages"
   community.general.django_manage:
     command: "compilemessages"
     app_path: "{{ amr_dashboard_app_path }}"
