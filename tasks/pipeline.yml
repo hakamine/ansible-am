@@ -1,47 +1,4 @@
 ###########################################################
-#  Variables 
-###########################################################
-
-- name: Check that required variables are defined (pipeline)
-  assert:
-    that:
-      - vars[item] is defined
-    fail_msg: "Variable {{ item }} needs to be defined"
-  become: false
-  loop:
-    - amr_django_secret_key
-    - amr_pipeline_db_password 
-
-- name: Define amr_pipeline_package_deps from internal vars if not explicitily defined
-  ansible.builtin.set_fact:
-    amr_pipeline_package_deps: "{{ __amr_pipeline_package_deps | list }}"
-  when: 
-    - amr_pipeline_packages_deps is not defined
-    - amr_install_pipeline_package_deps | bool
-
-# - For simplicity and make it easy to grasp how the variables are defined
-#   we are not combining environment variables (unlike the ansible-archivematica-src
-#   role)
-# - For example: if amr_dashboard_environment is not defined in host_vars, we use the default value
-#   in vars/ (__amr_dashboard_environment) (i.e., one or the other, not a combination)
-
-- name: Define amr_dashboard_environment from internal vars if not explicitly defined
-  ansible.builtin.set_fact:
-    amr_dashboard_environment: "{{ __amr_dashboard_environment }}"
-  when: amr_dashboard_environment is not defined
-
-- name: Define amr_mcpserver_environment from internal vars if not explicitly defined
-  ansible.builtin.set_fact:
-    amr_mcpserver_environment: "{{ __amr_mcpserver_environment }}"
-  when: amr_mcpserver_environment is not defined
-
-- name: Define amr_mcpclient_environment from internal vars if not explicitly defined
-  ansible.builtin.set_fact:
-    amr_mcpclient_environment: "{{ __amr_mcpclient_environment }}"
-  when: amr_mcpclient_environment is not defined
-
-
-###########################################################
 #  OS repository configuration and package dependencies
 ###########################################################
 

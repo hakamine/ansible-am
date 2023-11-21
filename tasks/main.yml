@@ -6,6 +6,7 @@
 
 - name: Include common installation tasks 
   ansible.builtin.import_tasks: common-inst.yml
+  when: amr_install_ss|bool or amr_install_pipeline|bool
 
 - name: Include Storage Service tasks 
   ansible.builtin.import_tasks: ss.yml

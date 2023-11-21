@@ -1,37 +1,4 @@
 ###########################################################
-#  Variables 
-###########################################################
-
-- name: Check that required variables are defined (storage service)
-  assert:
-    that:
-      - vars[item] is defined
-    fail_msg: "Variable {{ item }} needs to be defined"
-  become: false
-  loop:
-    - amr_django_secret_key
-    - amr_ss_db_password 
-
-- name: Define amr_ss_package_deps from internal vars if not explicitily defined
-  ansible.builtin.set_fact:
-    amr_ss_package_deps: "{{ __amr_ss_package_deps | list }}"
-  when: 
-    - amr_ss_packages_deps is not defined
-    - amr_install_ss_package_deps | bool
-
-# - For simplicity and make it easy to grasp how the variables are defined
-#   we are not combining environment variables (unlike the ansible-archivematica-src
-#   role)
-# - For example: if amr_ss_environment is not defined in host_vars, we use the default value
-#   in vars/ (__amr_ss_environment) (i.e., one or the other, not a combination)
-
-- name: Define amr_ss_environment from internal vars if not explicitly defined
-  ansible.builtin.set_fact:
-    amr_ss_environment: "{{ __amr_ss_environment }}"
-  when: amr_ss_environment is not defined
-
-
-###########################################################
 #  OS repository configuration and package dependencies
 ###########################################################
 
