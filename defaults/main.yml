@@ -13,6 +13,12 @@ amr_install_ss_package_deps: true
 amr_install_pipeline_package_deps: true
 
 ##################################################
+# Configure
+##################################################
+amr_configure_ss: false
+amr_configure_dashboard: false
+
+##################################################
 # Versions (repo branch or tag)
 ##################################################
 amr_ss_version: v0.21.0

@@ -1,0 +1,42 @@
+###########################################################
+#  Configure Storage Service account
+###########################################################
+
+- name: "Create SS superuser"
+  community.general.django_manage:
+    command: > 
+      create_user 
+      --username="{{ amr_configure_ss_user }}"
+      --password="{{ amr_configure_ss_password }}" 
+      --email="{{ amr_configure_ss_email }}"
+      --api-key="{{ amr_configure_ss_api_key }}" 
+      --superuser
+    app_path: "{{ amr_ss_app_path }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_ss_environment }}"
+  when: amr_configure_ss|bool
+
+###########################################################
+#  Configure Dashboard
+###########################################################
+
+- name: "Create Dashboard user and register pipeline on SS"
+  django_manage:
+    command: >
+      install 
+      --username="{{ amr_configure_dashboard_user }}"
+      --password="{{ amr_configure_dashboard_password }}"
+      --email="{{ amr_configure_dashboard_email }}"
+      --site-url="{{ amr_configure_dasboard_site_url }}"
+      --org-name="{{ amr_configure_dashboard_org_name }}"
+      --org-id="{{ amr_configure_dashboard_org_id }}"
+      --api-key="{{ amr_configure_dashboard_api_key }}"
+      --ss-url="{{ amr_configure_ss_url }}"
+      --ss-user="{{ amr_configure_ss_user }}"
+      --ss-api-key="{{ amr_configure_ss_api_key }}"
+      --allowlist="{{ amr_configure_dashboard_allowlist}}"
+    app_path: "{{ amr_dashboard_app_path }}"
+    pythonpath: "{{ amr_amcommon_app_path }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica'] | ansible.builtin.path_join }}"
+  environment: "{{ amr_dashboard_environment }}"
+  when: amr_configure_dashboard|bool

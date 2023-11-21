@@ -16,3 +16,8 @@
   ansible.builtin.import_tasks: pipeline.yml
   when:
     - amr_install_pipeline|bool
+
+- name: Include configuration tasks 
+  ansible.builtin.import_tasks: configure.yml
+  when:
+    - amr_configure_ss|bool or amr_configure_dashboard|bool
