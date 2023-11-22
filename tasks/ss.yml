@@ -80,6 +80,31 @@
     mode: '0664'
 
 ###########################################################
+#   Staging directory related config
+###########################################################
+
+- name: Check if staging directory exists
+  ansible.builtin.stat:
+    path: '/var/archivematica/storage_service'
+  register: stgdir_st
+
+- ansible.builtin.set_fact:
+    create_stgdir: true
+  when: stgdir_st.stat.exists is defined and not stgdir_st.stat.exists
+
+- ansible.builtin.set_fact:
+    create_stgdir: false
+  when: stgdir_st.stat.exists is defined and stgdir_st.stat.exists
+
+- name: Create staging directory (if it doesn't exist and there is no symlink to it)
+  ansible.builtin.file:
+    dest: '/var/archivematica/storage_service'
+    state: directory
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
+  when: create_stgdir
+
+###########################################################
 # SS Django management commands related tasks
 ###########################################################
 
