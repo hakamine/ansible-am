@@ -22,3 +22,8 @@
   ansible.builtin.import_tasks: configure.yml
   when:
     - amr_configure_ss|bool or amr_configure_dashboard|bool
+
+- name: Include sampledata tasks 
+  ansible.builtin.import_tasks: sampledata.yml
+  when:
+    - amr_install_sampledata|bool
