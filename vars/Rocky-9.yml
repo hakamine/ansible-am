@@ -8,23 +8,94 @@ __amr_ss_package_deps:
       - python3-PyMySQL           # for ansible role (mysql_db module)
       - pkgconf-pkg-config        # for mysqlclient
       - python3-devel             # for mysqlclient
-      - mysql-devel               # for mysqlclient
+      - mysql-devel               # (devel repo) for mysqlclient
       - gcc                       # for mysqlclient
       - openldap-devel            # for python-ldap
+      - unar
+      - p7zip
+      - p7zip-plugins
+      - zlib-devel
+      - libffi-devel
+      - rsync
+      - gnupg1
     update_cache: true
-    enablerepo: devel             # required for mysql-devel
+    enablerepo: 
+      - devel             # required for mysql-devel
+      - epel              # for unar, p7zip*, gnupg1
 
 __amr_pipeline_package_deps:
-  - name: 
-      - git                       # for ansible role (git module)
-      - python3-PyMySQL           # for ansible role (mysql_db module)
-      - pkgconf-pkg-config        # for mysqlclient
-      - python3-devel             # for mysqlclient
-      - mysql-devel               # for mysqlclient
-      - gcc                       # for mysqlclient
-      - openldap-devel            # for python-ldap
+  - name:                 # dashboard deps
+      - git                     # for ansible role (git module)
+      - python3-PyMySQL         # for ansible role (mysql_db module)
+      - pkgconf-pkg-config      # for mysqlclient
+      - python3-devel           # for mysqlclient
+      - mysql-devel             # for mysqlclient
+      - gcc                     # for mysqlclient
+      - openldap-devel          # for python-ldap
+      - libffi-devel
+      - libxml2-devel
+      - libxslt-devel
+      - openssl-devel
+      - unar
     update_cache: true
-    enablerepo: devel            # required for mysql-devel
+    enablerepo: 
+      - devel                   # required for mysql-devel
+      - epel                    # for unar, p7zip*, gnupg1, atool
+  - name:                 # MCP client deps
+      - atool
+      - bulk_extractor
+      - ffmpeg
+      - fits
+      - gearmand
+      - ghostscript
+      - ImageMagick
+      - inkscape
+      - jhove
+      - libewf
+      - libxml2
+      - libpst
+      - libraw1394
+      - libvpx
+      - md5deep
+      - mediainfo
+      - mediaconch
+      - nfs-utils
+      - java-1.8.0-openjdk-headless
+      - openjpeg2
+      - p7zip
+      - p7zip-plugins
+      - pbzip2
+      - perl-Image-ExifTool
+      - postfix
+      - rsync
+      - siegfried
+      - sleuthkit
+      - tesseract
+      - tree
+      - uuid 
+    enablerepo: 
+      - epel
+      - archivematica-extras    # for bulk_extractor, ffmpeg, fits
+  - name:               # MCP server deps
+      - unar
+      - rsync
+      - python3-devel
+      - libxml2-devel
+      - libxslt-devel
+      - zlib-devel
+      - libffi-devel
+      - openssl-devel
+      - gcc           # required to build some pip dependencies
+      - gcc-c++
+      - gettext
+      - p7zip
+      - p7zip-plugins
+      - gnupg1
+      - rng-tools
+      - openldap-devel
+      - rclone
+    enablerepo:
+      - epel
 
 ###########################################################
 # Other OS dependent parameters
