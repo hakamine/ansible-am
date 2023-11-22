@@ -124,8 +124,8 @@
   ansible.builtin.file:
     dest: '/var/archivematica/sharedDirectory'
     state: directory
-    owner: archivematica
-    group: archivematica
+    owner: "{{ amr_os_user_name }}"
+    group: "{{ amr_os_group_name }}"
   when: create_shareddir
 
 ###########################################################
