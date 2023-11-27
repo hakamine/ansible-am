@@ -76,6 +76,7 @@ __amr_pipeline_package_deps:
     enablerepo: 
       - epel
       - archivematica-extras    # for bulk_extractor, ffmpeg, fits
+      - crb                     # for ladspa (needed by ffmpeg-libs)
   - name:               # MCP server deps
       - unar
       - rsync
