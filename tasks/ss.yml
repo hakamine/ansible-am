@@ -123,6 +123,7 @@
   environment: "{{ amr_ss_environment }}"
 
 - name: "Run SS django database migrations"
+  tags: am-ss-db-migrate
   django_manage:
     command: "migrate"
     app_path: "{{ amr_ss_app_path }}"
