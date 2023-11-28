@@ -130,6 +130,11 @@
     virtualenv: "{{ [amr_virtualenv_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
   environment: "{{ amr_ss_environment }}"
 
+- name: "Ensure the generated artifacts are readable by all"
+  ansible.builtin.file:
+    path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
+    mode: "o+rX"
+    recurse: "yes"
 
 ###########################################################
 # gunicorn / systemd related configuration
