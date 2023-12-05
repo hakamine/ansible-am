@@ -22,8 +22,8 @@ amr_configure_dashboard: false
 ##################################################
 # Versions (repo branch or tag)
 ##################################################
-amr_ss_version: v0.21.0
-amr_pipeline_version: v1.15.0
+amr_ss_version: stable/0.21.x
+amr_pipeline_version: stable/1.15.x
 
 ##################################################
 # django secret key (no default value provided, must be defined)
