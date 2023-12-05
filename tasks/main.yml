@@ -6,6 +6,7 @@
   tags:
     - am-ss-db-migrate
     - am-pipeline-db-migrate
+    - am-pipeline-svc-config
 
 - name: Include common installation tasks 
   ansible.builtin.import_tasks: common-inst.yml

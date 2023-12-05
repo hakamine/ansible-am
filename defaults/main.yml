@@ -131,3 +131,35 @@ amr_os_group_gid: "333"
 amr_os_user_name: archivematica
 amr_os_user_uid: "333"
 amr_os_user_home: "/var/lib/archivematica"
+
+##################################################
+# Pipeline MCP client related settings
+##################################################
+
+# amr_pipeline_mcpclient_instances:
+# - Number of MCP client instance running on the pipeline
+# - Each instance has its own systemd config file (and env var file)
+# - The first instance is always named "archivematica-mcp-client"
+# - If amr_pipeline_mcpclient_instances >= 2 the additional services will be named:
+#     archivematica-mcp-client-2
+#     archivematica-mcp-client-3
+#     ...
+   
+amr_pipeline_mcpclient_instances: 1
+
+# amr_pipeline_mcpclient_prometheus_bind_port:
+# - Port for prometheus (to be set in env var 
+#   ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_PROMETHEUS_BIND_PORT)
+# - If more than 1 MCP client instances, port will be incrementally 
+#   numbered (e.g., if amr_mcpclient_instances: 3 and 
+#   amr_pipeline_mcpclient_prometheus_bind_port: 7999 => 7999, 8000, 8001 )
+amr_pipeline_mcpclient_prometheus_bind_port: 7999
+
+amr_pipeline_mcpclient_prometheus_bind_address: "127.0.0.1"
+
+##################################################
+# Pipeline MCP server related settings
+##################################################
+
+amr_pipeline_mcpserver_prometheus_bind_port: 7998
+amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"

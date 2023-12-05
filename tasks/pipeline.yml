@@ -193,6 +193,7 @@
 ###########################################################
 
 - name: Create/update Dashboard gunicorn configuration file (/etc/archivematica/)
+  tags: am-pipeline-svc-config
   ansible.builtin.template:
     src: etc/archivematica/dashboard.gunicorn-config.py.j2
     dest: /etc/archivematica/dashboard.gunicorn-config.py
@@ -203,6 +204,7 @@
   notify: Restart Dashboard (systemd)
 
 - name: Create/update pipeline systemd service files (/etc/systemd)
+  tags: am-pipeline-svc-config
   ansible.builtin.template:
     src: "etc/systemd/system/{{ item }}.service.j2"
     dest: /etc/systemd/system/{{ item }}.service
@@ -217,6 +219,7 @@
   notify: Restart Archivematica pipeline (systemd)
 
 - name: Create/update pipeline service env files
+  tags: am-pipeline-svc-config
   ansible.builtin.template:
     src: "etc/sysconfig/{{ item }}.j2"
     dest: "{{ [amr_envvar_file_path, item] | ansible.builtin.path_join }}"
@@ -231,6 +234,7 @@
   notify: Restart Archivematica pipeline (systemd)
 
 - name: Enable and start pipeline services (systemd)
+  tags: am-pipeline-svc-config
   ansible.builtin.systemd_service:
     name: "{{ item }}"
     state: started
@@ -240,3 +244,45 @@
     - archivematica-mcp-server
     - archivematica-mcp-client
     - archivematica-dashboard
+
+###########################################################
+# systemd related configuration for additional MCP client instances
+###########################################################
+
+- name: Create/update additional MCP client systemd service files (/etc/systemd)
+  tags: am-pipeline-svc-config
+  ansible.builtin.template:
+    src: "etc/systemd/system/archivematica-mcp-client-addit.service.j2"
+    dest: "/etc/systemd/system/archivematica-mcp-client-{{ '%1d' | format(item) }}.service"
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  loop: "{{ range(2, amr_pipeline_mcpclient_instances|int + 1 ) }}"
+  notify: Restart Archivematica pipeline (systemd)
+  when: amr_pipeline_mcpclient_instances > 1
+
+- name: Create/update additional MCP client service env files
+  tags: am-pipeline-svc-config
+  ansible.builtin.template:
+    src: "etc/sysconfig/archivematica-mcp-client-addit.j2"
+    dest: "{{ [amr_envvar_file_path, 'archivematica-mcp-client-%1d' | format(item) ] | ansible.builtin.path_join }}"
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  vars:
+    amr_mcpclient_addit_environment: "{{ amr_mcpclient_environment | ansible.builtin.combine({'ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_PROMETHEUS_BIND_PORT': amr_pipeline_mcpclient_prometheus_bind_port|int + item - 1 }, list_merge='append_rp') }}"
+  loop: "{{ range(2, amr_pipeline_mcpclient_instances|int + 1 ) }}"
+  notify: Restart Archivematica pipeline (systemd)
+  when: amr_pipeline_mcpclient_instances > 1
+
+- name: Enable and start additional MCP client services (systemd)
+  tags: am-pipeline-svc-config
+  ansible.builtin.systemd_service:
+    name: "archivematica-mcp-client-{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop: "{{ range(2, amr_pipeline_mcpclient_instances|int + 1 ) }}"
+  when: amr_pipeline_mcpclient_instances > 1
