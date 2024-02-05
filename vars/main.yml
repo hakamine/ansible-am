@@ -49,6 +49,7 @@ __amr_ss_environment:
   SS_GUNICORN_CHDIR: "{{ amr_ss_app_path }}"
   SS_GUNICORN_WORKERS: "3"
   SS_PROMETHEUS_ENABLED: "true"
+  TMPDIR: "{{ amr_ss_tmpdir | default(omit) }}"
 
 __amr_dashboard_environment:
   AM_GUNICORN_BIND: "{{ amr_pipeline_gunicorn_bind }}"
@@ -121,3 +122,4 @@ __amr_mcpclient_environment:
   PATH: "{{ [amr_virtualenv_path_base, 'archivematica/bin'] | ansible.builtin.path_join }}:/usr/local/sbin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin"
   PYTHONPATH: "{{ amr_mcpclient_app_path }}:{{ [amr_mcpclient_app_path, 'clientScripts'] | ansible.builtin.path_join }}:{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
   REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
+  TMPDIR: "{{ amr_pipeline_mcpclient_tmpdir | default(omit) }}"

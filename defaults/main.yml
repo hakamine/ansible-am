@@ -163,3 +163,29 @@ amr_pipeline_mcpclient_prometheus_bind_address: "127.0.0.1"
 
 amr_pipeline_mcpserver_prometheus_bind_port: 7998
 amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
+
+##################################################
+# TMPDIR settings
+##################################################
+
+# amr_pipeline_mcpclient_tmpdir:
+#   - Use to set the value of the TMPDIR env var if required (e.g., when
+#     /tmp is mounted noexec and want to force MCP client python code to use
+#     a different temp. directory when executing 7z)
+#   - Default: omitted (add to host_vars if required)
+#   - Refs. GitHub Archivematica issue #1425, PR #1882
+#     https://github.com/archivematica/Issues/issues/1425
+#     https://github.com/artefactual/archivematica/pull/1882
+#   - Example: 
+#     amr_pipeline_mcpclient_tmpdir: "/opt/archivematica/tmp"
+
+# amr_ss_tmpdir
+#   - Use to set the value of the TMPDIR env var if required (e.g., when
+#     /tmp is mounted noexec and want to force Storage Service python code
+#     to use a different temp. directory when executing 7z)
+#   - Default: omitted (add to host_vars if required)
+#   - Refs. GitHub Archivematica issue #1425, SS PR #681
+#     https://github.com/archivematica/Issues/issues/1425
+#     https://github.com/artefactual/archivematica-storage-service/pull/681
+#   - Example: 
+#     amr_ss_tmpdir: "/opt/archivematica/tmp"
