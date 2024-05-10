@@ -1,4 +1,29 @@
 ###########################################################
+#   Install packages required by this ansible role to work
+###########################################################
+
+- name: Install role packages dependencies (dnf)
+  ansible.builtin.dnf:
+    name: "{{ item.name }}"
+    enablerepo: "{{ item.enablerepo | default(omit) }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_role_package_deps }}"
+  when: 
+    - amr_install_role_package_deps | bool
+    - ansible_os_family in ['RedHat']
+
+
+- name: Install role packages dependencies (apt)
+  ansible.builtin.apt:
+    name: "{{ item.name }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_role_package_deps }}"
+  when: 
+    - amr_install_role_package_deps | bool
+    - ansible_os_family in ['Debian']
+
+
+###########################################################
 #   User/Group archivematica creation
 ###########################################################
 
@@ -49,6 +74,7 @@
   ansible.builtin.get_url:
     url: "https://bootstrap.pypa.io/get-pip.py"
     dest: "{{ [amr_os_user_home, 'get-pip.py'] | ansible.builtin.path_join }}"
+
 
 - name: "Install pip with get-pip.py for user archivematica"
   become: true

@@ -8,7 +8,32 @@
     enablerepo: "{{ item.enablerepo | default(omit) }}"
     update_cache: "{{ item.update_cache | default(omit) }}"
   loop: "{{ amr_pipeline_package_deps }}"
-  when: amr_install_pipeline_package_deps | bool
+  when: 
+    - amr_install_pipeline_package_deps | bool
+    - ansible_os_family in ['RedHat']
+
+- name: Install pipeline repositories (deb822)
+  ansible.builtin.deb822_repository:
+    name: "{{ item.name | default(omit) }}"
+    types: "{{ item.types | default(omit) }}"
+    architectures: "{{ item.architectures | default(omit) }}"
+    uris: "{{ item.uris | default(omit) }}"
+    suites: "{{ item.suites | default(omit) }}"
+    components: "{{ item.components | default(omit) }}"
+    signed_by: "{{ item.signed_by | default(omit) }}"
+  loop: "{{ amr_pipeline_repos }}"
+  when: 
+    - amr_install_pipeline_repos | bool
+    - ansible_os_family in ['Debian']
+
+- name: Install pipeline packages dependencies (apt)
+  ansible.builtin.apt:
+    name: "{{ item.name }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_pipeline_package_deps }}"
+  when: 
+    - amr_install_pipeline_package_deps | bool
+    - ansible_os_family in ['Debian']
 
 
 ###########################################################

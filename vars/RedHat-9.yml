@@ -2,10 +2,17 @@
 # Package dependencies (in case not explicitly defined)
 ###########################################################
 
+__amr_role_package_deps:
+  - name:
+    - acl     # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html
+    - git
+    - ca-certificates
+    - python3-PyMySQL           # mysql_db module
+    update_cache: true
+
+
 __amr_ss_package_deps:
   - name: 
-      - git                       # for ansible role (git module)
-      - python3-PyMySQL           # for ansible role (mysql_db module)
       - pkgconf-pkg-config        # for mysqlclient
       - python3-devel             # for mysqlclient
       - mysql-devel               # (devel repo) for mysqlclient
@@ -25,8 +32,6 @@ __amr_ss_package_deps:
 
 __amr_pipeline_package_deps:
   - name:                 # dashboard deps
-      - git                     # for ansible role (git module)
-      - python3-PyMySQL         # for ansible role (mysql_db module)
       - pkgconf-pkg-config      # for mysqlclient
       - python3-devel           # for mysqlclient
       - mysql-devel             # for mysqlclient

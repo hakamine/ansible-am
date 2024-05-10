@@ -1,0 +1,107 @@
+###########################################################
+# Package dependencies (in case not explicitly defined)
+###########################################################
+
+__amr_role_package_deps:
+  - name:
+    - acl     # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html
+    - git
+    - ca-certificates
+    update_cache: true
+
+__amr_ss_package_deps:
+  - name: 
+    - pkg-config   # for mysqlclient
+    - unar
+    - rsync
+    - p7zip-full
+    - python3.10-dev
+    - build-essential # required to compile brotli (cc1plus)
+    - libmysqlclient-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libz-dev
+    - libffi-dev
+    - libssl-dev
+    - gcc   # required to build some pip dependencies
+    - gettext
+    - gnupg1
+    - rng-tools-debian
+    - libsasl2-dev
+    - libldap2-dev
+    - rclone
+    update_cache: true
+
+
+# Repository list (to be installed with deb822_repository module)
+__amr_pipeline_repos:
+  - name: archivematica-ubuntu-externals
+    types: deb
+    architectures: amd64
+    uris: http://packages.archivematica.org/1.15.x/ubuntu-externals
+    suites: jammy
+    components: main
+    signed_by: https://packages.archivematica.org/GPG-KEY-archivematica
+
+__amr_pipeline_package_deps:
+  - name:                 # dashboard deps
+    - pkg-config   # for mysqlclient
+    - gcc
+    - g++
+    - gettext
+    - libffi-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - libssl-dev
+    - python3.10-dev
+    - libsasl2-dev # Required to pip install python-ldap in virtualenv
+    - libldap2-dev # Required to pip install python-ldap in virtualenv
+    - unar
+    - coreutils
+    - libmysqlclient-dev
+    update_cache: true
+  - name:                 # MCP Client
+    - atool
+    - bulk-extractor
+    - ffmpeg
+    - fits
+    - gearman
+    - ghostscript
+    - hashdeep
+    - imagemagick
+    - inkscape
+    - jhove
+    - libimage-exiftool-perl
+    - logapp
+    - md5deep
+    - nailgun
+    - mediaconch
+    - mediainfo
+    - nfs-common
+    - openjdk-8-jre-headless
+    - p7zip-full
+    - pbzip2
+    - postfix
+    - pst-utils
+    - rsync
+    - siegfried
+    - sleuthkit
+    - tesseract-ocr
+    - tree
+    - unrar-free
+    - uuid
+    - libmysqlclient-dev
+  - name:                   # MCP Server
+    - libmysqlclient-dev
+
+###########################################################
+# Other OS dependent parameters
+###########################################################
+# python binary used to run get-pip, create virtualenvs 
+__amr_python_executable: /bin/python3.10
+
+# TLS CA related
+amr_requests_ca_bundle: "/etc/ssl/certs/ca-certificates.crt"
+
+# Base path to store files containing environment variables
+amr_envvar_file_path: "/etc/default"

@@ -8,7 +8,20 @@
     enablerepo: "{{ item.enablerepo | default(omit) }}"
     update_cache: "{{ item.update_cache | default(omit) }}"
   loop: "{{ amr_ss_package_deps }}"
-  when: amr_install_ss_package_deps | bool
+  when: 
+    - amr_install_ss_package_deps | bool
+    - ansible_os_family in ['RedHat']
+
+
+- name: Install Storage Service packages dependencies (apt)
+  ansible.builtin.apt:
+    name: "{{ item.name }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_ss_package_deps }}"
+  when: 
+    - amr_install_ss_package_deps | bool
+    - ansible_os_family in ['Debian']
+
 
 
 ###########################################################

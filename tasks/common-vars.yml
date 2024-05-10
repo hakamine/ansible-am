@@ -13,6 +13,13 @@
     amr_python_executable: "{{ __amr_python_executable }}"
   when: amr_python_executable is not defined
 
+# role package deps
+- name: Define amr_role_package_deps from internal vars if not explicitly defined
+  ansible.builtin.set_fact:
+    amr_role_package_deps: "{{ __amr_role_package_deps }}"
+  when: amr_role_package_deps is not defined
+
+
 ###########################################################
 # Storage Service variables 
 ###########################################################
@@ -62,6 +69,13 @@
       loop:
         - amr_django_secret_key
         - amr_pipeline_db_password 
+
+    - name: Define amr_pipeline_repos from internal vars if not explicitily defined
+      ansible.builtin.set_fact:
+        amr_pipeline_repos: "{{ __amr_pipeline_repos | list }}"
+      when: 
+        - amr_pipeline_repos is not defined
+        - amr_install_pipeline_repos | bool
 
     - name: Define amr_pipeline_package_deps from internal vars if not explicitily defined
       ansible.builtin.set_fact:
