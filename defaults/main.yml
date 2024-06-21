@@ -10,6 +10,7 @@
 amr_install_ss: true                      # install SS
 amr_install_pipeline: true                # install pipeline (dashboard/MCP server/client)
 amr_install_sampledata: false
+amr_install_autom_tools: false            # install automation tools
 
 amr_install_role_package_deps: true       # install role package deps
 amr_install_ss_package_deps: true         # install SS package deps
@@ -27,6 +28,7 @@ amr_configure_dashboard: false
 ##################################################
 amr_ss_version: stable/0.21.x
 amr_pipeline_version: stable/1.15.x
+amr_autom_tools_version: master
 
 ##################################################
 # django secret key (no default value provided, must be defined)
@@ -58,6 +60,7 @@ amr_src_path_base: "/opt/archivematica"
 ##################################################
 amr_ss_repo: "https://github.com/artefactual/archivematica-storage-service.git"
 amr_pipeline_repo: "https://github.com/artefactual/archivematica.git"
+amr_autom_tools_repo: "https://github.com/artefactual/automation-tools.git"
 
 ##################################################
 # pip and pip-tools version to be used for virtualenvs

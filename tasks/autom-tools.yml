@@ -1,0 +1,62 @@
+###########################################################
+#   Clone source repo related tasks
+###########################################################
+
+- name: Add automation tools repo dir to git safe.directory
+  ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
+  vars:
+    __repo_full_path: "{{ [amr_src_path_base, 'automation-tools'] | ansible.builtin.path_join }}"
+
+- name: "Checkout automation tools code"
+  ansible.builtin.git:
+    repo: "{{ amr_autom_tools_repo }}"
+    dest: "{{ [amr_src_path_base, 'automation-tools'] | ansible.builtin.path_join }}"
+    version: "{{ amr_autom_tools_version }}"
+    force: true
+    accept_hostkey: true
+
+- name: "Ensure the source code is readable by all"
+  file:
+    path: "{{ [amr_src_path_base, 'automation-tools'] | ansible.builtin.path_join }}"
+    mode: "o+rX"
+    recurse: "yes"
+
+  
+###########################################################
+#   Virtualenv related tasks
+###########################################################
+
+- name: Create Storage Service virtualenv
+  ansible.builtin.import_tasks: tg-create-virtualenv.yml
+  vars:
+    __virtualenv_path: "{{ [amr_virtualenv_path_base, 'automation-tools'] | ansible.builtin.path_join }}"
+    __requirements_path: "{{ [amr_src_path_base, 'automation-tools'] | ansible.builtin.path_join }}"
+
+
+###########################################################
+#   Directory creation and example files
+###########################################################
+
+- name: Create directories for logs/database/PID files
+  file:
+    dest: "{{ item }}"
+    state: directory
+    owner: archivematica
+    group: archivematica
+  loop:
+    - /var/log/archivematica/automation-tools
+    - /var/archivematica/automation-tools
+
+- name: Create etc directory for automation tools
+  file:
+    dest: /etc/archivematica/automation-tools
+    state: directory
+
+- name: Create example configuration files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    backup: "yes"
+  with_items:
+    - etc/archivematica/automation-tools/transfers.example.conf
+    - etc/archivematica/automation-tools/transfer-script.example.sh

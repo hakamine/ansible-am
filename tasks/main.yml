@@ -7,6 +7,7 @@
     - am-ss-db-migrate
     - am-pipeline-db-migrate
     - am-pipeline-svc-config
+    - am-autom-tools
 
 - name: Include common installation tasks 
   ansible.builtin.import_tasks: common-inst.yml
@@ -31,3 +32,10 @@
   ansible.builtin.import_tasks: sampledata.yml
   when:
     - amr_install_sampledata|bool
+
+- name: Include automation tools tasks
+  ansible.builtin.import_tasks: autom-tools.yml
+  when:
+    - amr_install_autom_tools|bool
+  tags:
+    - am-autom-tools
