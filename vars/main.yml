@@ -50,6 +50,7 @@ __amr_ss_environment:
   SS_GUNICORN_WORKERS: "3"
   SS_PROMETHEUS_ENABLED: "true"
   TMPDIR: "{{ amr_ss_tmpdir | default(omit) }}"
+  TIME_ZONE: "{{ amr_ss_time_zone | default(omit) }}"
 
 __amr_dashboard_environment:
   AM_GUNICORN_BIND: "{{ amr_pipeline_gunicorn_bind }}"

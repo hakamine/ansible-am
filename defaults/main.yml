@@ -195,3 +195,15 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 #     https://github.com/artefactual/archivematica-storage-service/pull/681
 #   - Example: 
 #     amr_ss_tmpdir: "/opt/archivematica/tmp"
+
+##################################################
+# Time zone settings
+##################################################
+
+# amr_ss_time_zone
+#   - Use to set the value of the Storage Service TIME_ZONE env var
+#   - Default: omitted (add to host_vars if required)
+#   - Refs. GitHub SS PR #525
+#     https://github.com/artefactual/archivematica-storage-service/pull/525
+#   - Example: 
+#     amr_ss_time_zone: "America/Winnipeg"
