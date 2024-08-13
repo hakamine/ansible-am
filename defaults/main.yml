@@ -207,3 +207,9 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 #     https://github.com/artefactual/archivematica-storage-service/pull/525
 #   - Example: 
 #     amr_ss_time_zone: "America/Winnipeg"
+
+##################################################
+# Sampledata
+##################################################
+
+amr_sampledata_run_createtransfers: false     # generate special transfers

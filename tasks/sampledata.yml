@@ -11,3 +11,5 @@
     chdir: "{{ [amr_src_path_base, 'archivematica-sampledata'] | ansible.builtin.path_join }}"
   environment:
     LC_ALL: "en_US.utf8"
+  when:
+    - amr_sampledata_run_createtransfers|bool
