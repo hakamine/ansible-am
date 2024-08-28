@@ -47,7 +47,7 @@ __amr_ss_environment:
   SS_DB_URL: 'mysql://{{ amr_ss_db_user }}:{{ amr_ss_db_password }}@{{ amr_ss_db_host }}:{{ amr_ss_db_port }}/{{ amr_ss_db_name }}'
   SS_GUNICORN_BIND: "{{ amr_ss_gunicorn_bind }}"
   SS_GUNICORN_CHDIR: "{{ amr_ss_app_path }}"
-  SS_GUNICORN_WORKERS: "3"
+  SS_GUNICORN_WORKERS: "{{ amr_ss_gunicorn_workers }}"
   SS_PROMETHEUS_ENABLED: "true"
   TMPDIR: "{{ amr_ss_tmpdir | default(omit) }}"
   TIME_ZONE: "{{ amr_ss_time_zone | default(omit) }}"

@@ -91,6 +91,7 @@ amr_mcpclient_log_maxbytes_debug: "4194304"     #   4 Mbytes
 # gunicorn 
 ##################################################
 amr_ss_gunicorn_bind: "127.0.0.1:8001"
+amr_ss_gunicorn_workers: 3
 amr_pipeline_gunicorn_bind: "127.0.0.1:8002"
 
 ##################################################
