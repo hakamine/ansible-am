@@ -5,9 +5,11 @@
   ansible.builtin.import_tasks: common-vars.yml
   tags:
     - am-ss-db-migrate
+    - am-ss-svc-config
     - am-pipeline-db-migrate
     - am-pipeline-svc-config
     - am-autom-tools
+
 
 - name: Include common installation tasks 
   ansible.builtin.import_tasks: common-inst.yml

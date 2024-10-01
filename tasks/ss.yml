@@ -154,6 +154,7 @@
 ###########################################################
 
 - name: Create/update storage service gunicorn configuration file (/etc/archivematica/)
+  tags: am-ss-svc-config
   ansible.builtin.template:
     src: etc/archivematica/storage-service.gunicorn-config.py.j2
     dest: /etc/archivematica/storage-service.gunicorn-config.py
@@ -164,6 +165,7 @@
   notify: Restart Storage Service (systemd)
 
 - name: Create/update storage service gunicorn systemd service file (/etc/systemd)
+  tags: am-ss-svc-config
   ansible.builtin.template:
     src: etc/systemd/system/archivematica-storage-service.service.j2
     dest: /etc/systemd/system/archivematica-storage-service.service
@@ -174,6 +176,7 @@
   notify: Restart Storage Service (systemd)
 
 - name: Add storage service gunicorn systemd env file
+  tags: am-ss-svc-config
   ansible.builtin.template:
     src: etc/sysconfig/archivematica-storage-service.j2
     dest: "{{ [amr_envvar_file_path, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
@@ -184,6 +187,7 @@
   notify: Restart Storage Service (systemd)
 
 - name: Enable and start Storage Service (systemd)
+  tags: am-ss-svc-config
   ansible.builtin.systemd_service:
     name: archivematica-storage-service
     state: started
