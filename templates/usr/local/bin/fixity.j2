@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source {{  [amr_envvar_file_path, 'fixity'] | ansible.builtin.path_join  }}
+/usr/share/archivematica/virtualenvs/fixity//bin/fixity $*

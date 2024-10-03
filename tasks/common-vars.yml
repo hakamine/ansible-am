@@ -105,3 +105,14 @@
         amr_mcpclient_environment: "{{ __amr_mcpclient_environment }}"
       when: amr_mcpclient_environment is not defined
   when:  amr_install_pipeline|bool or  amr_configure_dashboard|bool
+
+###########################################################
+#  Fixity related variables 
+###########################################################
+
+- name: Define amr_fixity_package_deps from internal vars if not explicitily defined
+  ansible.builtin.set_fact:
+    amr_fixity_package_deps: "{{ __amr_fixity_package_deps | list }}"
+  when: 
+    - amr_fixity_packages_deps is not defined
+    - amr_install_fixity_package_deps | bool

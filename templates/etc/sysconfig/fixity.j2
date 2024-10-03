@@ -1,0 +1,15 @@
+#!/bin/bash
+export STORAGE_SERVICE_URL="{{ amr_fixity_ss_url }}"
+export STORAGE_SERVICE_USER="{{ amr_fixity_ss_user }}"
+export STORAGE_SERVICE_KEY="{{ amr_fixity_ss_apikey }}"
+export REQUESTS_CA_BUNDLE="{{ amr_requests_ca_bundle }}"
+
+{% if amr_fixity_report_url is defined %}
+export REPORT_URL="{{ amr_fixity_report_url }}"
+{% endif %}
+{% if amr_fixity_report_username is defined %}
+export REPORT_USERNAME="{{ amr_fixity_report_username }}"
+{% endif %}
+{% if amr_fixity_report_password is defined %}
+export REPORT_PASSWORD="{{ amr_fixity_report_password }}"
+{% endif %}

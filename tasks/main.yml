@@ -9,6 +9,7 @@
     - am-pipeline-db-migrate
     - am-pipeline-svc-config
     - am-autom-tools
+    - am-fixity
 
 
 - name: Include common installation tasks 
@@ -41,3 +42,10 @@
     - amr_install_autom_tools|bool
   tags:
     - am-autom-tools
+
+- name: Include fixity tasks
+  ansible.builtin.import_tasks: fixity.yml
+  when:
+    - amr_install_fixity|bool
+  tags:
+    - am-fixity

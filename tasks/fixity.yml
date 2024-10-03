@@ -1,0 +1,114 @@
+###########################################################
+#  OS repository configuration and package dependencies
+###########################################################
+
+
+- name: Install fixity packages dependencies (apt)
+  ansible.builtin.apt:
+    name: "{{ item.name }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_fixity_package_deps }}"
+  when: 
+    - amr_install_fixity_package_deps | bool
+    - ansible_os_family in ['Debian']
+
+###########################################################
+#   Clone source repo related tasks
+###########################################################
+
+- name: Add fixity repo dir to git safe.directory
+  ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
+  vars:
+    __repo_full_path: "{{ [amr_src_path_base, 'fixity'] | ansible.builtin.path_join }}"
+
+- name: Checkout fixity code
+  ansible.builtin.git:
+    repo: "{{ amr_fixity_repo }}"
+    dest: "{{ [amr_src_path_base, 'fixity'] | ansible.builtin.path_join }}"
+    version: "{{ amr_fixity_version }}"
+    force: true
+    accept_hostkey: true
+
+# Setting ownership of the fixity source code to the user running pip install below 
+# (need write permissions on the fixity source code dir)
+
+- name: Fix ownsership of the fixity source code directory
+  file:
+    path: "{{ [amr_src_path_base, 'fixity'] | ansible.builtin.path_join }}"
+    mode: "o+rX"
+    owner: archivematica
+    group: archivematica
+    recurse: "yes"
+
+###########################################################
+#   Virtualenv related tasks
+###########################################################
+
+- name: Create fixity virtualenv and install requirements
+  ansible.builtin.import_tasks: tg-create-virtualenv.yml
+  vars:
+    __virtualenv_path: "{{ [amr_virtualenv_path_base, 'fixity'] | ansible.builtin.path_join }}"
+    __requirements_path: "{{ [amr_src_path_base, 'fixity'] | ansible.builtin.path_join }}"
+
+- name: Run pip to install fixity on the fixity virtualenv (from local cloned repo, not pypi)
+  become: true
+  become_user: "{{ amr_os_user_name }}"
+  pip:
+    chdir: "{{ [amr_src_path_base, 'fixity'] | ansible.builtin.path_join }}"
+    virtualenv: "{{ [amr_virtualenv_path_base, 'fixity'] | ansible.builtin.path_join }}"
+    name: "."
+
+###########################################################
+#   Tasks to create other required files
+###########################################################
+
+- name: Create file to source fixity env vars
+  ansible.builtin.template:
+    src: etc/sysconfig/fixity.j2
+    dest: "{{ [amr_envvar_file_path, 'fixity'] | ansible.builtin.path_join }}"
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Create directories for fixity logs
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: archivematica
+    group: archivematica
+  loop:
+    - /var/log/archivematica/fixity
+
+- name: Create fixity scripts
+  ansible.builtin.template:
+     src: "usr/local/bin/{{ item }}.j2"
+     dest: "/usr/local/bin/{{ item }}"
+     mode: 0755
+     owner: root
+  with_items:
+    - fixity
+    - fixity-cron
+
+- name: Set up fixity cron file
+  cron:
+     cron_file: "fixity"      # file will be created in /etc/cron.d/
+     name: "Run fixity script"
+     job: "{{ amr_fixity_cron.job }}"
+     minute: "{{ amr_fixity_cron.minute }}"
+     hour: "{{ amr_fixity_cron.hour }}"
+     day: "{{ amr_fixity_cron.day }}"
+     month: "{{ amr_fixity_cron.month }}"
+     user: "{{ amr_fixity_cron.user }}"
+  tags:
+    - am-fixity-cron
+
+- name: Set up SHELL env var in fixity cron file
+  cron:
+     cron_file: "fixity"
+     user: "{{ amr_fixity_cron.user }}"
+     env: true
+     name: "SHELL"
+     value: "/bin/bash"
+  tags:
+    - am-fixity-cron

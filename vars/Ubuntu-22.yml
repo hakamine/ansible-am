@@ -94,6 +94,14 @@ __amr_pipeline_package_deps:
   - name:                   # MCP Server
     - libmysqlclient-dev
 
+__amr_fixity_package_deps:
+  - name:
+    - sqlite3
+    - moreutils
+    - mailutils
+    update_cache: true
+
+
 ###########################################################
 # Other OS dependent parameters
 ###########################################################

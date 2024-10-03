@@ -11,11 +11,13 @@ amr_install_ss: true                      # install SS
 amr_install_pipeline: true                # install pipeline (dashboard/MCP server/client)
 amr_install_sampledata: false
 amr_install_autom_tools: false            # install automation tools
+amr_install_fixity: false
 
 amr_install_role_package_deps: true       # install role package deps
 amr_install_ss_package_deps: true         # install SS package deps
 amr_install_pipeline_repos: true          # Install(configure) pipeline repos
 amr_install_pipeline_package_deps: true   # Install pipeline package deps
+amr_install_fixity_package_deps: true     # Install fixity package deps (if fixity is installed)
 
 ##################################################
 # Configure
@@ -29,6 +31,7 @@ amr_configure_dashboard: false
 amr_ss_version: stable/0.21.x
 amr_pipeline_version: stable/1.15.x
 amr_autom_tools_version: master
+amr_fixity_version: master
 
 ##################################################
 # django secret key (no default value provided, must be defined)
@@ -61,6 +64,7 @@ amr_src_path_base: "/opt/archivematica"
 amr_ss_repo: "https://github.com/artefactual/archivematica-storage-service.git"
 amr_pipeline_repo: "https://github.com/artefactual/archivematica.git"
 amr_autom_tools_repo: "https://github.com/artefactual/automation-tools.git"
+amr_fixity_repo: "https://github.com/artefactual/fixity.git"
 
 ##################################################
 # pip and pip-tools version to be used for virtualenvs
@@ -214,3 +218,25 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 ##################################################
 
 amr_sampledata_run_createtransfers: false     # generate special transfers
+
+##################################################
+# Fixity
+##################################################
+
+amr_fixity_ss_url: "http://localhost:8000"
+# The following need to be defined in host_vars (no defaults provided) 
+#amr_fixity_ss_user: "<USER>"
+#amr_fixity_ss_apikey: "<SS_API_KEY>"
+
+# The following vars are optional, define in host_vars if needed
+#amr_fixity_report_url: "http://report"
+#amr_fixity_report_username: "test"
+#amr_fixity_report_password: "XXXX"
+
+amr_fixity_cron:
+  job: "/usr/local/bin/fixity-cron"
+  minute: "0"
+  hour: "0"
+  day: "1"
+  month: "*/6"
+  user: "archivematica"
