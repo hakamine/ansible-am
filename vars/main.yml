@@ -106,7 +106,7 @@ __amr_mcpclient_environment:
   ARCHIVEMATICA_MCPCLIENT_EMAIL_PORT: "25"
   ARCHIVEMATICA_MCPCLIENT_EMAIL_USE_TLS: "False"
   ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_ARCHIVEMATICACLIENTMODULES: "{{ [amr_mcpclient_app_path, 'archivematicaClientModules'] | ansible.builtin.path_join }}"
-  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLIENTASSETSDIRECTORY: "{{ [amr_mcpclient_app_path, 'assets'] | ansible.builtin.path_join }}"
+  ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLIENTASSETSDIRECTORY: "{{ [amr_mcpclient_app_path, 'assets/'] | ansible.builtin.path_join }}"      # trailing slash required to work correctly
   ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLIENTSCRIPTSDIRECTORY: "{{ [amr_mcpclient_app_path, 'clientScripts'] | ansible.builtin.path_join }}"
   ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_CLAMAV_SERVER: "{{ amr_pipeline_mcpclient_clamav_server | default(omit) }}"
   ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_PROMETHEUS_BIND_PORT: "{{ amr_pipeline_mcpclient_prometheus_bind_port }}"
