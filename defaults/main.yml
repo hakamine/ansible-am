@@ -233,6 +233,9 @@ amr_fixity_ss_url: "http://localhost:8000"
 #amr_fixity_report_username: "test"
 #amr_fixity_report_password: "XXXX"
 
+# The role will set up a cron entry by default, set to false if not needed
+amr_fixity_setup_cron: true
+
 amr_fixity_cron:
   job: "/usr/local/bin/fixity-cron"
   minute: "0"

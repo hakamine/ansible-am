@@ -103,6 +103,13 @@ __amr_pipeline_package_deps:
     enablerepo:
       - epel
 
+__amr_fixity_package_deps:
+  - name:
+    - sqlite
+    - moreutils
+    - s-nail
+    update_cache: true
+
 ###########################################################
 # Other OS dependent parameters
 ###########################################################

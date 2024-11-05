@@ -2,6 +2,15 @@
 #  OS repository configuration and package dependencies
 ###########################################################
 
+- name: Install fixity packages dependencies (dnf)
+  ansible.builtin.dnf:
+    name: "{{ item.name }}"
+    enablerepo: "{{ item.enablerepo | default(omit) }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ amr_fixity_package_deps }}"
+  when: 
+    - amr_install_fixity_package_deps | bool
+    - ansible_os_family in ['RedHat']
 
 - name: Install fixity packages dependencies (apt)
   ansible.builtin.apt:
@@ -102,6 +111,8 @@
      user: "{{ amr_fixity_cron.user }}"
   tags:
     - am-fixity-cron
+  when: 
+    - amr_fixity_setup_cron | bool
 
 - name: Set up SHELL env var in fixity cron file
   cron:
@@ -112,3 +123,5 @@
      value: "/bin/bash"
   tags:
     - am-fixity-cron
+  when: 
+    - amr_fixity_setup_cron | bool
