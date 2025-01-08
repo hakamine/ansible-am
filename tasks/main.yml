@@ -35,6 +35,8 @@
   ansible.builtin.import_tasks: sampledata.yml
   when:
     - amr_install_sampledata|bool
+  tags:
+    - am-sampledata
 
 - name: Include automation tools tasks
   ansible.builtin.import_tasks: autom-tools.yml

@@ -217,6 +217,10 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 # Sampledata
 ##################################################
 
+amr_sampledata_dest: "~/archivematica-sampledata"
+amr_sampledata_version: master
+amr_sampledata_force: false       # discard local changes
+amr_sampledata_become: false      # use become(sudo) when git cloning repo
 amr_sampledata_run_createtransfers: false     # generate special transfers
 
 ##################################################

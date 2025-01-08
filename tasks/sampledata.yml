@@ -1,9 +1,11 @@
 - name: "Checkout out archivematica-sampledata repository"
   ansible.builtin.git:
     repo: "https://github.com/artefactual/archivematica-sampledata.git"
-    dest: "{{ [amr_src_path_base, 'archivematica-sampledata'] | ansible.builtin.path_join }}"
-    force: true
+    dest: "{{ amr_sampledata_dest }}"
+    version: "{{ amr_sampledata_version }}"
+    force: "{{ amr_sampledata_force }}"
     depth: 1
+  become: "{{ amr_sampledata_become }}"
 
 - name: "Generate special sampledata transfers"
   command: "make simple"
