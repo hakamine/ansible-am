@@ -214,6 +214,27 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 #     amr_ss_time_zone: "America/Winnipeg"
 
 ##################################################
+# Email related setting
+##################################################
+
+# amr_ss_default_from_email
+#   - Use to set the value of the Storage Service DEFAULT_FROM_EMAIL env var
+#   - Default: omitted (add to host_vars if required)
+#   - Example:
+#     amr_ss_default_from_email: "myemail@myserver.org"
+
+# amr_pipeline_default_from_email
+#   - Use to set the value of:
+#       Dashboard ARCHIVEMATICA_DASHBOARD_EMAIL_DEFAULT_FROM_EMAIL env var
+#       MCP Client ARCHIVEMATICA_MCPCLIENT_EMAIL_DEFAULT_FROM_EMAIL
+#       MCP Server ARCHIVEMATICA_MCPSERVER_EMAIL_DEFAULT_FROM_EMAIL
+#       (it will set the same value to all three)
+#   - Default: omitted (add to host_vars if required)
+#   - Example:
+#     amr_pipeline_default_from_email: "myemail@myserver.org"
+
+
+##################################################
 # Sampledata
 ##################################################
 

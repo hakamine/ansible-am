@@ -51,6 +51,7 @@ __amr_ss_environment:
   SS_PROMETHEUS_ENABLED: "true"
   TMPDIR: "{{ amr_ss_tmpdir | default(omit) }}"
   TIME_ZONE: "{{ amr_ss_time_zone | default(omit) }}"
+  DEFAULT_FROM_EMAIL: "{{ amr_ss_default_from_email | default(omit) }}"
 
 __amr_dashboard_environment:
   AM_GUNICORN_BIND: "{{ amr_pipeline_gunicorn_bind }}"
@@ -75,6 +76,7 @@ __amr_dashboard_environment:
   LC_LANG: "en_US.UTF-8"
   PYTHONPATH: "{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
   REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
+  ARCHIVEMATICA_DASHBOARD_EMAIL_DEFAULT_FROM_EMAIL: "{{ amr_pipeline_default_from_email | default(omit) }}"
 
 __amr_mcpserver_environment:
   ARCHIVEMATICA_MCPSERVER_CLIENT_HOST: "{{ amr_pipeline_db_host }}"
@@ -93,7 +95,7 @@ __amr_mcpserver_environment:
   LC_LANG: "en_US.UTF-8"
   PYTHONPATH: "{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
   REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
-
+  ARCHIVEMATICA_MCPSERVER_EMAIL_DEFAULT_FROM_EMAIL: "{{ amr_pipeline_default_from_email | default(omit) }}"
 
 __amr_mcpclient_environment:
   ARCHIVEMATICA_MCPCLIENT_CLIENT_HOST: "{{ amr_pipeline_db_host }}"
@@ -124,3 +126,4 @@ __amr_mcpclient_environment:
   PYTHONPATH: "{{ amr_mcpclient_app_path }}:{{ [amr_mcpclient_app_path, 'clientScripts'] | ansible.builtin.path_join }}:{{ amr_amcommon_app_path }}:{{ amr_dashboard_app_path }}"
   REQUESTS_CA_BUNDLE: "{{ amr_requests_ca_bundle }}"
   TMPDIR: "{{ amr_pipeline_mcpclient_tmpdir | default(omit) }}"
+  ARCHIVEMATICA_MCPCLIENT_EMAIL_DEFAULT_FROM_EMAIL: "{{ amr_pipeline_default_from_email | default(omit) }}"
