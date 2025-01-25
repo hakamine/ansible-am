@@ -110,9 +110,22 @@
 #  Fixity related variables 
 ###########################################################
 
-- name: Define amr_fixity_package_deps from internal vars if not explicitily defined
-  ansible.builtin.set_fact:
-    amr_fixity_package_deps: "{{ __amr_fixity_package_deps | list }}"
-  when: 
-    - amr_fixity_packages_deps is not defined
-    - amr_install_fixity_package_deps | bool
+- name: Fixity variables task block
+  block:
+    - name: Check that required variables are defined (storage service)
+      assert:
+        that:
+          - vars[item] is defined
+        fail_msg: "Variable {{ item }} needs to be defined"
+      become: false
+      loop:
+        - amr_fixity_ss_user
+        - amr_fixity_ss_apikey
+
+    - name: Define amr_fixity_package_deps from internal vars if not explicitily defined
+      ansible.builtin.set_fact:
+        amr_fixity_package_deps: "{{ __amr_fixity_package_deps | list }}"
+      when: 
+        - amr_fixity_packages_deps is not defined
+        - amr_install_fixity_package_deps | bool
+  when:  amr_install_fixity|bool

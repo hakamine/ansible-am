@@ -52,11 +52,11 @@
     dest: /etc/archivematica/automation-tools
     state: directory
 
-- name: Create example configuration files
-  template:
-    src: "{{ item }}.j2"
-    dest: "/{{ item }}"
-    backup: "yes"
-  with_items:
-    - etc/archivematica/automation-tools/transfers.example.conf
-    - etc/archivematica/automation-tools/transfer-script.example.sh
+- name: Create automation tools script(s) and config file(s)
+  ansible.builtin.template:
+     src: "{{ item.src }}"
+     dest: "{{ item.dest }}"
+     mode: "{{ item.mode }}"
+     owner: root
+     backup: true
+  loop: "{{ amr_autom_tools_scripts }}"
