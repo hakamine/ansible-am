@@ -112,7 +112,7 @@
 
 - name: Fixity variables task block
   block:
-    - name: Check that required variables are defined (storage service)
+    - name: Check that required variables are defined (fixity)
       assert:
         that:
           - vars[item] is defined
