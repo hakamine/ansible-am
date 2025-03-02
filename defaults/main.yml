@@ -246,7 +246,10 @@ amr_install_autom_tools: false            # install automation tools
 amr_autom_tools_version: master
 amr_autom_tools_repo: "https://github.com/artefactual/automation-tools.git"
 
-# If custom scripts/config needed, override the following in host_vars 
+# amr_autom_tools_scripts:
+#   - Add configuration/scripts (usually to /etc/archivematica/automation-tools)
+#   - Files will be overwritten (but backups will be created)
+#   - If custom scripts/config needed, override in host_vars
 amr_autom_tools_scripts:
   - src: templates/etc/archivematica/automation-tools/transfers.example.conf.j2
     dest: /etc/archivematica/automation-tools/transfers.example.conf
@@ -254,6 +257,28 @@ amr_autom_tools_scripts:
   - src: templates/etc/archivematica/automation-tools/transfer-script.example.sh.j2
     dest: /etc/archivematica/automation-tools/transfer-script.example.sh
     mode: '0775'
+
+# amr_autom_tools_transfers_pre_transfer_files:
+#   - Add files to the automation tools transfers/pre-transfer directory
+#   - Files will be overwritten (and NO backups are created)
+#   - Default: omitted (define in host_vars if required)
+#   - Example:
+#     amr_autom_tools_transfers_pre_transfer_files:
+#       - src: "templates/{{ inventory_hostname }}/opt/archivematica/automation-tools/transfers/pre-transfer/add_metadata_dspace.py.j2"
+#         dest: /opt/archivematica/automation-tools/transfers/pre-transfer/add_metadata_dspace.py
+#         mode: '0775'
+#       - src: "templates/{{ inventory_hostname }}/opt/archivematica/automation-tools/transfers/pre-transfer/default_config.py.j2"
+#         dest: /opt/archivematica/automation-tools/transfers/pre-transfer/default_config.py
+#         mode: '0775'
+
+# amr_autom_tools_transfers_symlink_processingmcp:
+#   - Add a symlink from a processing config to the pre-transfer directory
+#   - Default: omitted/no symlink created (define in host_vars if needed)
+#   - Example:
+#     amr_autom_tools_transfers_symlink_processingmcp:
+#       - src: "/var/archivematica/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/automatedProcessingMCP.xml"
+#         dest: "/opt/archivematica/automation-tools/transfers/pre-transfer/defaultProcessingMCP.xml"
+
 
 ##################################################
 # Fixity

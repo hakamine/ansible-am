@@ -34,7 +34,7 @@
 
 
 ###########################################################
-#   Directory creation and example files
+#   Directory creation and config files
 ###########################################################
 
 - name: Create directories for logs/database/PID files
@@ -60,3 +60,23 @@
      owner: root
      backup: true
   loop: "{{ amr_autom_tools_scripts }}"
+
+- name: Add files to transfers/pre-transfer/
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    backup: true
+  loop: "{{ amr_autom_tools_transfers_pre_transfer_files }}"
+  when: amr_autom_tools_transfers_pre_transfer_files is defined
+
+- name: Add processing configuration symlink to transfers/pre-transfer/
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    owner: archivematica
+    group: archivematica
+  loop: "{{ amr_autom_tools_transfers_symlink_processingmcp }}"
+  when: amr_autom_tools_transfers_symlink_processingmcp is defined
