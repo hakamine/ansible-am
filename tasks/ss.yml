@@ -29,19 +29,23 @@
 ###########################################################
 
 - name: Add Storage Service repo dir to git safe.directory
+  tags: am-ss-code
   ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
   vars:
     __repo_full_path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
 
 - name: "Checkout archivematica-storage-service code"
+  tags: am-ss-code
   ansible.builtin.git:
     repo: "{{ amr_ss_repo }}"
     dest: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
     version: "{{ amr_ss_version }}"
     force: true
     accept_hostkey: true
+  notify: Restart Storage Service (systemd)
 
 - name: "Ensure the source code is readable by all"
+  tags: am-ss-code
   file:
     path: "{{ [amr_src_path_base, 'archivematica-storage-service'] | ansible.builtin.path_join }}"
     mode: "o+rX"
