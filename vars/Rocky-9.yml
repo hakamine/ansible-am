@@ -50,7 +50,6 @@ __amr_pipeline_package_deps:
       - atool
       - bulk_extractor
       - ffmpeg
-      - fits
       - gearmand
       - ghostscript
       - ImageMagick
@@ -80,7 +79,7 @@ __amr_pipeline_package_deps:
       - uuid 
     enablerepo: 
       - epel
-      - archivematica-extras    # for bulk_extractor, ffmpeg, fits
+      - archivematica-extras    # for bulk_extractor, ffmpeg
       - crb                     # for ladspa (needed by ffmpeg-libs)
   - name:               # MCP server deps
       - unar

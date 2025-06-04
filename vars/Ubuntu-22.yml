@@ -64,7 +64,6 @@ __amr_pipeline_package_deps:
     - atool
     - bulk-extractor
     - ffmpeg
-    - fits
     - gearman
     - ghostscript
     - hashdeep
