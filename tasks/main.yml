@@ -12,7 +12,7 @@
     - am-pipeline-svc-config
     - am-autom-tools
     - am-fixity
-
+    - am-fixity-scripts
 
 - name: Include common installation tasks 
   ansible.builtin.import_tasks: common-inst.yml

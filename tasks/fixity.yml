@@ -96,6 +96,8 @@
      mode: 0755
      owner: root
      backup: true
+  tags:
+    - am-fixity-scripts
   loop: "{{ amr_fixity_scripts }}"
 
 - name: Set up fixity cron file
