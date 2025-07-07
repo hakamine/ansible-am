@@ -316,4 +316,5 @@ amr_fixity_cron:
   hour: "0"
   day: "1"
   month: "*/6"
+  weekday: "*"
   user: "archivematica"

@@ -107,6 +107,7 @@
      hour: "{{ amr_fixity_cron.hour }}"
      day: "{{ amr_fixity_cron.day }}"
      month: "{{ amr_fixity_cron.month }}"
+     weekday: "{{ amr_fixity_cron.weekday }}"
      user: "{{ amr_fixity_cron.user }}"
   tags:
     - am-fixity-cron
