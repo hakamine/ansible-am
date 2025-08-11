@@ -89,11 +89,11 @@
   loop:
     - /var/log/archivematica/fixity
 
-- name: Create fixity scripts
+- name: Create fixity scripts and config files
   ansible.builtin.template:
      src: "{{ item.src }}"
      dest: "{{ item.dest }}"
-     mode: 0755
+     mode: "{{ item.mode }}"
      owner: root
      backup: true
   tags:

@@ -299,8 +299,10 @@ amr_fixity_ss_url: "http://localhost:8000"
 amr_fixity_scripts:
   - src: "templates/usr/local/bin/fixity.j2"
     dest: "/usr/local/bin/fixity"
+    mode: '0775'
   - src: "templates/usr/local/bin/fixity-cron.j2"
     dest: "/usr/local/bin/fixity-cron"
+    mode: '0775'
 
 # The following vars are optional, define in host_vars if needed
 #amr_fixity_report_url: "http://report"
