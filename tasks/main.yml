@@ -8,6 +8,8 @@
     - am-ss-code
     - am-ss-db-migrate
     - am-ss-svc-config
+    - am-pipeline
+    - am-pipeline-code
     - am-pipeline-db-migrate
     - am-pipeline-svc-config
     - am-autom-tools
@@ -29,6 +31,8 @@
   ansible.builtin.import_tasks: pipeline.yml
   when:
     - amr_install_pipeline|bool
+  tags:
+    - am-pipeline
 
 - name: Include configuration tasks 
   ansible.builtin.import_tasks: configure.yml

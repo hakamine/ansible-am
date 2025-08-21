@@ -41,11 +41,13 @@
 ###########################################################
 
 - name: Add pipeline repo dir to git safe.directory
+  tags: am-pipeline-code
   ansible.builtin.import_tasks: tg-git-add-safe-dir.yml
   vars:
     __repo_full_path: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
 
 - name: Checkout pipeline code
+  tags: am-pipeline-code
   ansible.builtin.git:
     repo: "{{ amr_pipeline_repo }}"
     dest: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
@@ -53,8 +55,10 @@
     force: true
     accept_hostkey: true
     recursive: false
+  notify: Restart Archivematica pipeline (systemd)
 
 - name: "Ensure the source code is readable by all"
+  tags: am-pipeline-code
   file:
     path: "{{ [amr_src_path_base, 'archivematica'] | ansible.builtin.path_join }}"
     mode: "o+rX"
