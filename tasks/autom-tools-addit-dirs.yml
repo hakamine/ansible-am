@@ -1,0 +1,16 @@
+- name: Create directories for logs/database/PID files
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    owner: archivematica
+    group: archivematica
+    mode: "0755"
+  loop:
+    - "/var/log/archivematica/automation-tools-{{ '%1d' | format(item) }}"
+    - "/var/archivematica/automation-tools-{{ '%1d' | format(item) }}"
+
+- name: Create etc directory for automation tools
+  ansible.builtin.file:
+    dest: "/etc/archivematica/automation-tools-{{ '%1d' | format(item) }}"
+    state: directory
+    mode: "0755"

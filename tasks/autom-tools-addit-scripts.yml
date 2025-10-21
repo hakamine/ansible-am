@@ -1,0 +1,8 @@
+- name: Create automation tools script(s) and config file(s)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    backup: true
+  loop: "{{ amr_autom_tools_scripts_addit[__amr_instance] }}"

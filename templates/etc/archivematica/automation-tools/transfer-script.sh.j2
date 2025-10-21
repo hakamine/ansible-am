@@ -1,0 +1,15 @@
+#!/bin/bash
+# automation-tools:transfers script
+
+cd /opt/archivematica/automation-tools/
+/usr/share/archivematica/virtualenvs/automation-tools/bin/python -m transfers.transfer \
+  --am-url {{ amr_autom_tools_template_am_url | default('CHANGEME') }} \
+  --user {{ amr_autom_tools_template_am_user | default('CHANGEME') }} \
+  --api-key {{ amr_autom_tools_template_am_apikey | default('CHANGEME') }} \
+  --transfer-source {{ amr_autom_tools_template_transfer_source_uuid | default('CHANGEME') }} \
+  --config-file /etc/archivematica/automation-tools/transfers.conf \
+  --ss-url {{ amr_autom_tools_template_ss_url | default('CHANGEME') }} \
+  --ss-user {{ amr_autom_tools_template_ss_user | default('CHANGEME') }} \
+  --ss-api-key {{ amr_autom_tools_template_ss_apikey | default('CHANGEME') }} \
+  --transfer-type {{ amr_autom_tools_template_transfer_type | default('CHANGEME') }}
+# for extra logging add --log-level DEBUG

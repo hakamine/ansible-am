@@ -16,12 +16,20 @@
     accept_hostkey: true
 
 - name: "Ensure the source code is readable by all"
-  file:
+  ansible.builtin.file:
     path: "{{ [amr_src_path_base, 'automation-tools'] | ansible.builtin.path_join }}"
     mode: "o+rX"
     recurse: "yes"
 
-  
+###########################################################
+#   Clone source repo related tasks (additional instances)
+###########################################################
+
+- name: Clone source repo related tasks (additional instances)
+  loop: "{{ range(2, amr_autom_tools_instances | int + 1) }}"
+  when: amr_autom_tools_instances > 1
+  include_tasks: autom-tools-addit-clone.yml
+
 ###########################################################
 #   Virtualenv related tasks
 ###########################################################
@@ -34,32 +42,62 @@
 
 
 ###########################################################
-#   Directory creation and config files
+#   Directory creation 
 ###########################################################
 
 - name: Create directories for logs/database/PID files
-  file:
+  ansible.builtin.file:
     dest: "{{ item }}"
     state: directory
     owner: archivematica
     group: archivematica
+    mode: "0755"
   loop:
     - /var/log/archivematica/automation-tools
     - /var/archivematica/automation-tools
 
 - name: Create etc directory for automation tools
-  file:
+  ansible.builtin.file:
     dest: /etc/archivematica/automation-tools
     state: directory
+    mode: "0755"
+
+###########################################################
+#   Directory creation (addditional instances)
+###########################################################
+
+- name: Directory creation and config files (addditional instances)
+  loop: "{{ range(2, amr_autom_tools_instances | int + 1) }}"
+  when: amr_autom_tools_instances > 1
+  include_tasks: autom-tools-addit-dirs.yml
+
+###########################################################
+#   Scripts and config files
+###########################################################
 
 - name: Create automation tools script(s) and config file(s)
   ansible.builtin.template:
-     src: "{{ item.src }}"
-     dest: "{{ item.dest }}"
-     mode: "{{ item.mode }}"
-     owner: root
-     backup: true
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    backup: true
   loop: "{{ amr_autom_tools_scripts }}"
+
+###########################################################
+#   Scripts and config files (additional instances)
+###########################################################
+
+- name: Scripts and config files (additional instances)
+  loop: "{{ range(2, amr_autom_tools_instances | int + 1) }}"
+  when: amr_autom_tools_instances > 1
+  loop_control:
+    loop_var: __amr_instance 
+  include_tasks: autom-tools-addit-scripts.yml
+
+###########################################################
+#   pre-transfer scripts
+###########################################################
 
 - name: Add files to transfers/pre-transfer/
   ansible.builtin.template:
@@ -70,6 +108,10 @@
     backup: true
   loop: "{{ amr_autom_tools_transfers_pre_transfer_files }}"
   when: amr_autom_tools_transfers_pre_transfer_files is defined
+
+###########################################################
+#   processing config symlinks
+###########################################################
 
 - name: Add processing configuration symlink to transfers/pre-transfer/
   ansible.builtin.file:

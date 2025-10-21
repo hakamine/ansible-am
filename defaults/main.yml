@@ -1,5 +1,5 @@
 # defaults file for ansible-am
-# - This file contains variables that commmonly could be overriden by 
+# - This file contains variables that commmonly could be overriden by
 #   host_vars or playbooks
 # - For common variables in the role that should normally be left unchanged
 #   use files in the vars/ directory instead
@@ -86,7 +86,7 @@ amr_mcpclient_log_maxbytes: "4194304"     #   4 Mbytes
 amr_mcpclient_log_maxbytes_debug: "4194304"     #   4 Mbytes
 
 ##################################################
-# gunicorn 
+# gunicorn
 ##################################################
 amr_ss_gunicorn_bind: "127.0.0.1:8001"
 amr_ss_gunicorn_workers: 3
@@ -149,14 +149,14 @@ amr_os_user_home: "/var/lib/archivematica"
 #     archivematica-mcp-client-2
 #     archivematica-mcp-client-3
 #     ...
-   
+
 amr_pipeline_mcpclient_instances: 1
 
 # amr_pipeline_mcpclient_prometheus_bind_port:
-# - Port for prometheus (to be set in env var 
+# - Port for prometheus (to be set in env var
 #   ARCHIVEMATICA_MCPCLIENT_MCPCLIENT_PROMETHEUS_BIND_PORT)
-# - If more than 1 MCP client instances, port will be incrementally 
-#   numbered (e.g., if amr_mcpclient_instances: 3 and 
+# - If more than 1 MCP client instances, port will be incrementally
+#   numbered (e.g., if amr_mcpclient_instances: 3 and
 #   amr_pipeline_mcpclient_prometheus_bind_port: 7999 => 7999, 8000, 8001 )
 amr_pipeline_mcpclient_prometheus_bind_port: 7999
 
@@ -181,7 +181,7 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 #   - Refs. GitHub Archivematica issue #1425, PR #1882
 #     https://github.com/archivematica/Issues/issues/1425
 #     https://github.com/artefactual/archivematica/pull/1882
-#   - Example: 
+#   - Example:
 #     amr_pipeline_mcpclient_tmpdir: "/opt/archivematica/tmp"
 
 # amr_ss_tmpdir
@@ -192,7 +192,7 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 #   - Refs. GitHub Archivematica issue #1425, SS PR #681
 #     https://github.com/archivematica/Issues/issues/1425
 #     https://github.com/artefactual/archivematica-storage-service/pull/681
-#   - Example: 
+#   - Example:
 #     amr_ss_tmpdir: "/opt/archivematica/tmp"
 
 ##################################################
@@ -204,7 +204,7 @@ amr_pipeline_mcpserver_prometheus_bind_address: "127.0.0.1"
 #   - Default: omitted (add to host_vars if required)
 #   - Refs. GitHub SS PR #525
 #     https://github.com/artefactual/archivematica-storage-service/pull/525
-#   - Example: 
+#   - Example:
 #     amr_ss_time_zone: "America/Winnipeg"
 
 ##################################################
@@ -246,17 +246,41 @@ amr_install_autom_tools: false            # install automation tools
 amr_autom_tools_version: master
 amr_autom_tools_repo: "https://github.com/artefactual/automation-tools.git"
 
+# amr_autom_tools_instances
+#   - Number of independent automation tools code instances
+#     (useful when needing different pre-transfer scripts per instance)
+#   - Default: 1  (/opt/archivematica/automation-tools)
+#   - If more than 1 specified the will be installed in suffixed directories
+#     (e.g. /opt/archivematica/automation-tools-2 ...)
+amr_autom_tools_instances: 1
+
 # amr_autom_tools_scripts:
 #   - Add configuration/scripts (usually to /etc/archivematica/automation-tools)
 #   - Files will be overwritten (but backups will be created)
 #   - If custom scripts/config needed, override in host_vars
 amr_autom_tools_scripts:
-  - src: templates/etc/archivematica/automation-tools/transfers.example.conf.j2
-    dest: /etc/archivematica/automation-tools/transfers.example.conf
+  - src: templates/etc/archivematica/automation-tools/transfers.conf.j2
+    dest: /etc/archivematica/automation-tools/transfers.conf
     mode: '0664'
-  - src: templates/etc/archivematica/automation-tools/transfer-script.example.sh.j2
-    dest: /etc/archivematica/automation-tools/transfer-script.example.sh
+  - src: templates/etc/archivematica/automation-tools/transfer-script.sh.j2
+    dest: /etc/archivematica/automation-tools/transfer-script.sh
     mode: '0775'
+
+# amr_autom_tools_scripts_addit:
+#   - config/scripts for additional automation tool instances
+#   - Default: omitted (define in host_vars if amr_autom_tools_instances > 1)
+#   - Define as a dictionary where the key is the instance number (2, 3, ...),
+#     and the value is a list of dictionaries containing the information about
+#     the templates
+#   - Example:
+      # amr_autom_tools_scripts_addit:
+      #   2:
+      #     - src: templates/etc/archivematica/automation-tools/transfers-addit.conf.j2
+      #       dest: /etc/archivematica/automation-tools-2/transfers.conf
+      #       mode: '0664'
+      #     - src: templates/etc/archivematica/automation-tools/transfer-script-addit.sh.j2
+      #       dest: /etc/archivematica/automation-tools-2/transfer-script.sh
+      #       mode: '0775'
 
 # amr_autom_tools_transfers_pre_transfer_files:
 #   - Add files to the automation tools transfers/pre-transfer directory
@@ -291,11 +315,11 @@ amr_fixity_version: master
 
 amr_fixity_ss_url: "http://localhost:8000"
 
-# The following need to be defined in host_vars (no defaults provided) 
-#amr_fixity_ss_user: "<USER>"
-#amr_fixity_ss_apikey: "<SS_API_KEY>"
+# The following need to be defined in host_vars (no defaults provided)
+# amr_fixity_ss_user: "<USER>"
+# amr_fixity_ss_apikey: "<SS_API_KEY>"
 
-# If custom scripts needed, override the following in host_vars 
+# If custom scripts needed, override the following in host_vars
 amr_fixity_scripts:
   - src: "templates/usr/local/bin/fixity.j2"
     dest: "/usr/local/bin/fixity"
@@ -305,9 +329,9 @@ amr_fixity_scripts:
     mode: '0775'
 
 # The following vars are optional, define in host_vars if needed
-#amr_fixity_report_url: "http://report"
-#amr_fixity_report_username: "test"
-#amr_fixity_report_password: "XXXX"
+# amr_fixity_report_url: "http://report"
+# amr_fixity_report_username: "test"
+# amr_fixity_report_password: "XXXX"
 
 # The role will set up a cron entry by default, set to false if not needed
 amr_fixity_setup_cron: true
