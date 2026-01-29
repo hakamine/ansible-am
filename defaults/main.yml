@@ -303,6 +303,36 @@ amr_autom_tools_scripts:
 #       - src: "/var/archivematica/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/automatedProcessingMCP.xml"
 #         dest: "/opt/archivematica/automation-tools/transfers/pre-transfer/defaultProcessingMCP.xml"
 
+# The role won't set up a cron job by default for automation tools,
+# set to true in host_vars if needed
+amr_autom_tools_setup_cron: false
+
+# default cron settings for automation tools (override in host_vars if needed)
+amr_autom_tools_cron:
+  job: "/etc/archivematica/automation-tools/transfer-script.sh"
+  minute: "0,20,40"
+  hour: "*"
+  day: "*"
+  month: "*"
+  weekday: "*"
+  user: "archivematica"
+
+# amr_autom_tools_cron_addit:
+#   - cron config for additional automation tool instances
+#   - Default: omitted (define in host_vars if amr_autom_tools_instances > 1)
+#   - Define as a dictionary where the key is the instance number (2, 3, ...),
+#     and the value is a dictionary containing the respective config
+#   - Example:
+      # amr_autom_tools_cron_addit:
+      #   2:
+      #     job: "/etc/archivematica/automation-tools-2/transfer-script.sh"
+      #     minute: "10,30,50"
+      #     hour: "*"
+      #     day: "*"
+      #     month: "*"
+      #     weekday: "*"
+      #     user: "archivematica"
+
 
 ##################################################
 # Fixity

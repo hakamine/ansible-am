@@ -122,3 +122,74 @@
     group: archivematica
   loop: "{{ amr_autom_tools_transfers_symlink_processingmcp }}"
   when: amr_autom_tools_transfers_symlink_processingmcp is defined
+
+###########################################################
+#   cron setup
+###########################################################
+
+- name: Set up automation tools cron file
+  cron:
+     cron_file: "automation-tools"      # file will be created in /etc/cron.d/
+     name: "Run automation tools script"
+     job: "{{ amr_autom_tools_cron.job }}"
+     minute: "{{ amr_autom_tools_cron.minute }}"
+     hour: "{{ amr_autom_tools_cron.hour }}"
+     day: "{{ amr_autom_tools_cron.day }}"
+     month: "{{ amr_autom_tools_cron.month }}"
+     weekday: "{{ amr_autom_tools_cron.weekday }}"
+     user: "{{ amr_autom_tools_cron.user }}"
+  when: 
+    - amr_autom_tools_setup_cron | bool
+  tags:
+    - am-autom-tools-cron
+
+- name: Set up SHELL env var in automation tools cron file
+  cron:
+     cron_file: "automation-tools"
+     user: "{{ amr_autom_tools_cron.user }}"
+     env: true
+     name: "SHELL"
+     value: "/bin/bash"
+  when: 
+    - amr_autom_tools_setup_cron | bool
+  tags:
+    - am-autom-tools-cron
+
+###########################################################
+#   cron setup (additional instances)
+###########################################################
+
+- name: Cron setup (additional instances)
+  loop: "{{ range(2, amr_autom_tools_instances | int + 1) }}"
+  when: 
+    - amr_autom_tools_instances > 1
+    - amr_autom_tools_setup_cron | bool
+  loop_control:
+    loop_var: __amr_instance
+  cron:
+      cron_file: "automation-tools-{{ __amr_instance }}"      # file will be created in /etc/cron.d/
+      name: "Run automation tools script instance {{ __amr_instance }}"
+      job: "{{ amr_autom_tools_cron_addit[__amr_instance].job }}"
+      minute: "{{ amr_autom_tools_cron_addit[__amr_instance].minute }}"
+      hour: "{{ amr_autom_tools_cron_addit[__amr_instance].hour }}"
+      day: "{{ amr_autom_tools_cron_addit[__amr_instance].day }}"
+      month: "{{ amr_autom_tools_cron_addit[__amr_instance].month }}"
+      weekday: "{{ amr_autom_tools_cron_addit[__amr_instance].weekday }}"
+      user: "{{ amr_autom_tools_cron_addit[__amr_instance].user }}"
+  tags:
+    - am-autom-tools-cron
+- name: Set up SHELL env var in automation tools cron file (additional instances)
+  loop: "{{ range(2, amr_autom_tools_instances | int + 1) }}"
+  when: 
+    - amr_autom_tools_instances > 1
+    - amr_autom_tools_setup_cron | bool
+  loop_control:
+    loop_var: __amr_instance
+  cron:
+      cron_file: "automation-tools-{{ __amr_instance }}"
+      user: "{{ amr_autom_tools_cron_addit[__amr_instance].user }}"
+      env: true
+      name: "SHELL"
+      value: "/bin/bash"
+  tags:
+    - am-autom-tools-cron
